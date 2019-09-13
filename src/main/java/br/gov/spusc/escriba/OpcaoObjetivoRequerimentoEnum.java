@@ -16,7 +16,7 @@ public enum OpcaoObjetivoRequerimentoEnum {
 	
 	REGISTRO_CARTORIAL(7, "Registro Cartorial"),
 	
-	OUTROS(6, "Outros");
+	OUTRO(6, "Outro");
 	
 	private Integer id;
 	private String objetivo;

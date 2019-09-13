@@ -51,10 +51,10 @@ public class EscribaApp {
 	}
 
 	public EscribaApp() {
-		initialize();
+		inicializar();
 	}
 
-	private void initialize() {
+	private void inicializar() {
 		credencialAcessoSPUnet = new CredencialAcesso();
 		credencialAcessoSPUnet.setPropriedadeLogin(CONFIG_CREDENCIAL_SPUNET_LOGIN);
 		credencialAcessoSPUnet.setPropriedadeSenha(CONFIG_CREDENCIAL_SPUNET_SENHA);
@@ -148,9 +148,26 @@ public class EscribaApp {
 
 	}
 
-	public void extrair() {
-		new Thread(new Runnable() {
+	public void log(String mensagem) {
+		log(mensagem, true);
+	}
 
+	public void log(String mensagem, boolean quebrarLinha) {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				janelaPrincipal.getConsole().append(mensagem);
+				if(quebrarLinha) {
+					janelaPrincipal.getConsole().append("\n\r");	
+				}
+			}
+		}).start();
+		;
+	}
+
+	public void obterDadosRequerimentoSPUnet() {
+		new Thread(new Runnable() {
+	
 			@Override
 			public void run() {
 				try {
@@ -170,6 +187,7 @@ public class EscribaApp {
 					log(requerimento.toString());
 					
 					janelaPrincipal.setRequerimento(requerimento);
+					operador.encerrarDriver();				
 				} catch (TimeoutException te) {
 					log("O SPUnet parece não estar funcionando. Verifique sua conexão de rede e/ou aguarde o retorno do sistema.");
 				} catch (Exception e) {
@@ -177,25 +195,33 @@ public class EscribaApp {
 				}				
 			}
 		}).start();
-
-
 	}
-
-	public void log(String mensagem) {
-		log(mensagem, true);
-	}
-
-	public void log(String mensagem, boolean quebrarLinha) {
+	
+	public void criarParecerTecnicoSEI() {
 		new Thread(new Runnable() {
+	
 			@Override
 			public void run() {
-				janelaPrincipal.getConsole().append(mensagem);
-				if(quebrarLinha) {
-					janelaPrincipal.getConsole().append("\n\r");	
-				}
+				try {
+					log("Iniciando leitura do requerimento do SPUnet...");
+					OperadorSEI operador = new OperadorSEI();
+					
+					log("Inicializando driver... ", false);
+					operador.inicializarDriver();
+					log("OK!");
+					
+					log("Iniciando autenticação no sistema... ", false);
+					operador.fazerLogin(janelaPrincipal.obterCredencialSEI());
+					log("OK!");
+					
+					// operador.encerrarDriver();				
+				} catch (TimeoutException te) {
+					log("O SPUnet parece não estar funcionando. Verifique sua conexão de rede e/ou aguarde o retorno do sistema.");
+				} catch (Exception e) {
+					log(e.getMessage());
+				}				
 			}
 		}).start();
-		;
 	}
 
 }

@@ -2,7 +2,10 @@ package br.gov.spusc.escriba.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,6 +26,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.border.TitledBorder;
 
 import org.openqa.selenium.TimeoutException;
 
@@ -34,19 +38,26 @@ import br.gov.spusc.escriba.pojo.Requerimento;
 public class JanelaPrincipal {	
 	
 	private JFrame frame;
+
 	private JTextArea textAreaConsole;
+	
 	private JTextField textAtendimento;
 	private JTextField textNupSei;
-	
 	private JTextField textCredencialSPUnetLogin;
-	private JPasswordField textCredencialSPUnetSenha;
-	private JComboBox<OpcaoObjetivoRequerimentoEnum> comboObjetivoRequerimento;
+	private JTextField textCredencialSEILogin;
 	private JTextField textObjetivoOutro;
+	
+	private JPasswordField textCredencialSPUnetSenha;
+	private JPasswordField textCredencialSEISenha;
+	
+	private JComboBox<OpcaoObjetivoRequerimentoEnum> comboObjetivoRequerimento;
 
 	private EscribaApp escriba;
 	private CredencialAcessoDialog credencialAcessoSEIDialog;
 	private CredencialAcessoDialog credencialAcessoSPUnetDialog;
 	private Requerimento requerimento;
+	private JPanel panel;
+
 
 	public JanelaPrincipal(EscribaApp escriba) {
 		this.escriba = escriba;
@@ -92,6 +103,196 @@ public class JanelaPrincipal {
 		mnCredenciaisDeAcesso.add(mntmSpunet);
 	}
 
+	private JPanel montarPainelPrincipal() {
+		JPanel panelPrincipal = new JPanel();
+		GridLayout gl_panelPrincipal = new GridLayout(0, 1);
+		gl_panelPrincipal.setVgap(5);
+		gl_panelPrincipal.setHgap(5);
+		panelPrincipal.setLayout(gl_panelPrincipal);
+		
+		JPanel panel_2 = new JPanel();
+		panel_2.setBorder(new TitledBorder(null, "Credenciais de Acesso", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panelPrincipal.add(panel_2);
+		panel_2.setLayout(new GridLayout(0, 2, 0, 0));
+		
+		panel = new JPanel();
+		panel_2.add(panel);
+		panel.setBorder(new TitledBorder(null, "SPUnet", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		GridBagLayout gbl_panel = new GridBagLayout();
+		gbl_panel.columnWidths = new int[] {60, 200};
+		gbl_panel.rowHeights = new int[] {30, 30};
+		gbl_panel.columnWeights = new double[]{0.0, 0.0};
+		gbl_panel.rowWeights = new double[]{0.0, 0.0};
+		panel.setLayout(gbl_panel);
+		JLabel label_1 = new JLabel("Login:", JLabel.RIGHT);
+		GridBagConstraints gbc_label_1 = new GridBagConstraints();
+		gbc_label_1.fill = GridBagConstraints.BOTH;
+		gbc_label_1.insets = new Insets(0, 0, 5, 5);
+		gbc_label_1.gridx = 0;
+		gbc_label_1.gridy = 0;
+		panel.add(label_1, gbc_label_1);
+		textCredencialSPUnetLogin = new JTextField();
+		GridBagConstraints gbc_textCredencialSPUnetLogin = new GridBagConstraints();
+		gbc_textCredencialSPUnetLogin.fill = GridBagConstraints.BOTH;
+		gbc_textCredencialSPUnetLogin.insets = new Insets(0, 0, 5, 0);
+		gbc_textCredencialSPUnetLogin.gridx = 1;
+		gbc_textCredencialSPUnetLogin.gridy = 0;
+		panel.add(textCredencialSPUnetLogin, gbc_textCredencialSPUnetLogin);
+		JLabel label_2 = new JLabel("Senha: ", JLabel.RIGHT);
+		GridBagConstraints gbc_label_2 = new GridBagConstraints();
+		gbc_label_2.fill = GridBagConstraints.BOTH;
+		gbc_label_2.insets = new Insets(0, 0, 0, 5);
+		gbc_label_2.gridx = 0;
+		gbc_label_2.gridy = 1;
+		panel.add(label_2, gbc_label_2);
+		textCredencialSPUnetSenha = new JPasswordField();
+		GridBagConstraints gbc_textCredencialSPUnetSenha = new GridBagConstraints();
+		gbc_textCredencialSPUnetSenha.fill = GridBagConstraints.BOTH;
+		gbc_textCredencialSPUnetSenha.gridx = 1;
+		gbc_textCredencialSPUnetSenha.gridy = 1;
+		panel.add(textCredencialSPUnetSenha, gbc_textCredencialSPUnetSenha);
+		
+		JPanel panel_1 = new JPanel();
+		panel_2.add(panel_1);
+		panel_1.setBorder(new TitledBorder(null, "SEI", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		GridBagLayout gbl_panel_1 = new GridBagLayout();
+		gbl_panel_1.columnWidths = new int[] {60, 200};
+		gbl_panel_1.rowHeights = new int[] {30, 30};
+		gbl_panel_1.columnWeights = new double[]{0.0, 0.0};
+		gbl_panel_1.rowWeights = new double[]{0.0, 0.0};
+		panel_1.setLayout(gbl_panel_1);
+		JLabel label_3 = new JLabel("Login:", JLabel.RIGHT);
+		GridBagConstraints gbc_label_3 = new GridBagConstraints();
+		gbc_label_3.fill = GridBagConstraints.BOTH;
+		gbc_label_3.insets = new Insets(0, 0, 5, 5);
+		gbc_label_3.gridx = 0;
+		gbc_label_3.gridy = 0;
+		panel_1.add(label_3, gbc_label_3);
+		textCredencialSEILogin = new JTextField();
+		GridBagConstraints gbc_textCredencialSEILogin = new GridBagConstraints();
+		gbc_textCredencialSEILogin.fill = GridBagConstraints.BOTH;
+		gbc_textCredencialSEILogin.insets = new Insets(0, 0, 5, 0);
+		gbc_textCredencialSEILogin.gridx = 1;
+		gbc_textCredencialSEILogin.gridy = 0;
+		panel_1.add(textCredencialSEILogin, gbc_textCredencialSEILogin);
+		JLabel label_4 = new JLabel("Senha: ", JLabel.RIGHT);
+		GridBagConstraints gbc_label_4 = new GridBagConstraints();
+		gbc_label_4.fill = GridBagConstraints.BOTH;
+		gbc_label_4.insets = new Insets(0, 0, 0, 5);
+		gbc_label_4.gridx = 0;
+		gbc_label_4.gridy = 1;
+		panel_1.add(label_4, gbc_label_4);
+		textCredencialSEISenha = new JPasswordField();
+		GridBagConstraints gbc_textCredencialSEISenha = new GridBagConstraints();
+		gbc_textCredencialSEISenha.fill = GridBagConstraints.BOTH;
+		gbc_textCredencialSEISenha.gridx = 1;
+		gbc_textCredencialSEISenha.gridy = 1;
+		panel_1.add(textCredencialSEISenha, gbc_textCredencialSEISenha);
+		
+		JPanel panel_3 = new JPanel();
+		panel_3.setBorder(new TitledBorder(null, "Requerimento SPUnet", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panelPrincipal.add(panel_3);
+		GridBagLayout gbl_panel_3 = new GridBagLayout();
+		gbl_panel_3.columnWidths = new int[] {120, 200, 120, 300};
+		gbl_panel_3.rowHeights = new int[] {30, 30, 30};
+		gbl_panel_3.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0};
+		gbl_panel_3.rowWeights = new double[]{0.0, 0.0, 0.0};
+		panel_3.setLayout(gbl_panel_3);
+		JLabel label = new JLabel("Nº de Atendimento: ", JLabel.RIGHT);
+		GridBagConstraints gbc_label = new GridBagConstraints();
+		gbc_label.fill = GridBagConstraints.BOTH;
+		gbc_label.insets = new Insets(0, 0, 5, 5);
+		gbc_label.gridx = 0;
+		gbc_label.gridy = 0;
+		panel_3.add(label, gbc_label);
+		textAtendimento = new JTextField();
+		GridBagConstraints gbc_textAtendimento = new GridBagConstraints();
+		gbc_textAtendimento.fill = GridBagConstraints.BOTH;
+		gbc_textAtendimento.insets = new Insets(0, 0, 5, 5);
+		gbc_textAtendimento.gridx = 1;
+		gbc_textAtendimento.gridy = 0;
+		panel_3.add(textAtendimento, gbc_textAtendimento);
+		textAtendimento.setText("SC03148/2019");
+		JButton botaoObterDadosSPUnet = new JButton("Obter dados do requerimento");
+		GridBagConstraints gbc_botaoObterDadosSPUnet = new GridBagConstraints();
+		gbc_botaoObterDadosSPUnet.fill = GridBagConstraints.BOTH;
+		gbc_botaoObterDadosSPUnet.insets = new Insets(0, 0, 5, 5);
+		gbc_botaoObterDadosSPUnet.gridx = 2;
+		gbc_botaoObterDadosSPUnet.gridy = 0;
+		panel_3.add(botaoObterDadosSPUnet, gbc_botaoObterDadosSPUnet);
+		botaoObterDadosSPUnet.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					validarInputObrigatorio(getTextCredencialSPUnetLogin(), "Informe o login do SPUnet");
+					validarInputObrigatorio(getTextCredencialSPUnetSenha(), "Informe a senha do SPUnet"); 
+					if(textAtendimento.getText().isBlank()) {
+						exibirMensagem("Informe o número do atendimento SPUnet");
+						textAtendimento.requestFocus();
+						return;
+					}
+					escriba.obterDadosRequerimentoSPUnet();
+				} catch (TimeoutException timeoutException) {
+					exibirMensagem("O SPUnet parece não estar respondendo.\n\rVerifique sua conexão de rede ou aguarde o retorno do sistema.");
+				} 
+				catch (Exception e1) {
+					exibirMensagem(e1.getMessage());
+				}
+			}
+		});
+		JLabel label_7 = new JLabel("NUP SEI: ", JLabel.RIGHT);
+		GridBagConstraints gbc_label_7 = new GridBagConstraints();
+		gbc_label_7.fill = GridBagConstraints.BOTH;
+		gbc_label_7.insets = new Insets(0, 0, 5, 5);
+		gbc_label_7.gridx = 0;
+		gbc_label_7.gridy = 1;
+		panel_3.add(label_7, gbc_label_7);
+		textNupSei = new JTextField();
+		GridBagConstraints gbc_textNupSei = new GridBagConstraints();
+		gbc_textNupSei.fill = GridBagConstraints.BOTH;
+		gbc_textNupSei.insets = new Insets(0, 0, 5, 5);
+		gbc_textNupSei.gridx = 1;
+		gbc_textNupSei.gridy = 1;
+		panel_3.add(textNupSei, gbc_textNupSei);
+		
+		
+		// NUP SEi
+		JLabel label_5 = new JLabel("Objetivo do Requerimento:");
+		GridBagConstraints gbc_label_5 = new GridBagConstraints();
+		gbc_label_5.fill = GridBagConstraints.BOTH;
+		gbc_label_5.insets = new Insets(0, 0, 0, 5);
+		gbc_label_5.gridx = 0;
+		gbc_label_5.gridy = 2;
+		panel_3.add(label_5, gbc_label_5);
+		
+		comboObjetivoRequerimento = new JComboBox<OpcaoObjetivoRequerimentoEnum>();
+		GridBagConstraints gbc_comboObjetivoRequerimento = new GridBagConstraints();
+		gbc_comboObjetivoRequerimento.fill = GridBagConstraints.BOTH;
+		gbc_comboObjetivoRequerimento.insets = new Insets(0, 0, 0, 5);
+		gbc_comboObjetivoRequerimento.gridx = 1;
+		gbc_comboObjetivoRequerimento.gridy = 2;
+		panel_3.add(comboObjetivoRequerimento, gbc_comboObjetivoRequerimento);
+		comboObjetivoRequerimento.setModel(new DefaultComboBoxModel<OpcaoObjetivoRequerimentoEnum>(OpcaoObjetivoRequerimentoEnum.values()));
+		
+		JLabel label_6 = new JLabel("Outro: ", JLabel.RIGHT);
+		GridBagConstraints gbc_label_6 = new GridBagConstraints();
+		gbc_label_6.fill = GridBagConstraints.BOTH;
+		gbc_label_6.insets = new Insets(0, 0, 0, 5);
+		gbc_label_6.gridx = 2;
+		gbc_label_6.gridy = 2;
+		panel_3.add(label_6, gbc_label_6);
+		textObjetivoOutro = new JTextField();
+		textObjetivoOutro.setEnabled(false);
+		GridBagConstraints gbc_textObjetivoOutro = new GridBagConstraints();
+		gbc_textObjetivoOutro.fill = GridBagConstraints.BOTH;
+		gbc_textObjetivoOutro.gridx = 3;
+		gbc_textObjetivoOutro.gridy = 2;
+		panel_3.add(textObjetivoOutro, gbc_textObjetivoOutro);
+		
+		return panelPrincipal;
+	}
+
 	private JPanel montarPainelRodape() {
 		JPanel panelRodape = new JPanel();
 		panelRodape.setLayout(new BorderLayout(0, 0));
@@ -112,85 +313,6 @@ public class JanelaPrincipal {
 		splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		frame.getContentPane().add(splitPane, BorderLayout.CENTER);
 		return splitPane;
-	}
-
-	private JPanel montarPainelPrincipal() {
-		JPanel panelPrincipal = new JPanel();
-		GridLayout gl_panelPrincipal = new GridLayout(0, 4);
-		gl_panelPrincipal.setVgap(5);
-		gl_panelPrincipal.setHgap(5);
-		panelPrincipal.setLayout(gl_panelPrincipal);
-		
-		// Credenciais do SPUnet
-		panelPrincipal.add(new JLabel("Credencial SPUnet", JLabel.RIGHT));
-		panelPrincipal.add(new JLabel());
-		panelPrincipal.add(new JLabel());
-		panelPrincipal.add(new JLabel());
-		
-		panelPrincipal.add(new JLabel("Login:", JLabel.RIGHT));
-		textCredencialSPUnetLogin = new JTextField();
-		panelPrincipal.add(textCredencialSPUnetLogin);
-		
-		panelPrincipal.add(new JLabel("Senha: ", JLabel.RIGHT));
-		textCredencialSPUnetSenha = new JPasswordField();
-		panelPrincipal.add(textCredencialSPUnetSenha);
-		
-		
-		// Atendimento SPUnet
-		panelPrincipal.add(new JLabel());
-		panelPrincipal.add(new JLabel());
-		panelPrincipal.add(new JLabel("Nº de Atendimento: ", JLabel.RIGHT));
-		textAtendimento = new JTextField();
-		textAtendimento.setText("SC03148/2019");
-		panelPrincipal.add(textAtendimento);
-		
-		// Botao Obter Dados
-		panelPrincipal.add(new JLabel());
-		panelPrincipal.add(new JLabel());
-		panelPrincipal.add(new JLabel());		
-		JButton botaoObterDadosSPUnet = new JButton("Obter dados do requerimento");
-		botaoObterDadosSPUnet.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					validarInputObrigatorio(getTextCredencialSPUnetLogin(), "Informe o login do SPUnet");
-					validarInputObrigatorio(getTextCredencialSPUnetSenha(), "Informe a senha do SPUnet"); 
-					if(textAtendimento.getText().isBlank()) {
-						exibirMensagem("Informe o número do atendimento SPUnet");
-						textAtendimento.requestFocus();
-						return;
-					}
-					escriba.extrair();
-				} catch (TimeoutException timeoutException) {
-					exibirMensagem("O SPUnet parece não estar respondendo.\n\rVerifique sua conexão de rede ou aguarde o retorno do sistema.");
-				} 
-				catch (Exception e1) {
-					exibirMensagem(e1.getMessage());
-				}
-			}
-		});
-		panelPrincipal.add(botaoObterDadosSPUnet);
-		
-		
-		// NUP SEi
-		panelPrincipal.add(new JLabel("Objetivo do Requerimento:"));
-		
-		comboObjetivoRequerimento = new JComboBox<OpcaoObjetivoRequerimentoEnum>();
-		comboObjetivoRequerimento.setModel(new DefaultComboBoxModel<OpcaoObjetivoRequerimentoEnum>(OpcaoObjetivoRequerimentoEnum.values()));
-		panelPrincipal.add(comboObjetivoRequerimento);
-		
-		panelPrincipal.add(new JLabel("Outro: ", JLabel.RIGHT));
-		textObjetivoOutro = new JTextField();
-		panelPrincipal.add(textObjetivoOutro);
-		
-		panelPrincipal.add(new JLabel(""));
-		panelPrincipal.add(new JLabel(""));
-		panelPrincipal.add(new JLabel("NUP SEI: ", JLabel.RIGHT));
-		textNupSei = new JTextField();
-		panelPrincipal.add(textNupSei);
-		
-		return panelPrincipal;
 	}
 
 	protected void validarInputObrigatorio(JTextField inputField, String mensagem) throws Exception {
@@ -254,6 +376,12 @@ public class JanelaPrincipal {
 				textCredencialSPUnetLogin.getText(), 
 				new String(textCredencialSPUnetSenha.getPassword()));
 	}
+	
+	public CredencialAcesso obterCredencialSEI() {
+		return new CredencialAcesso(
+				textCredencialSEILogin.getText(), 
+				new String(textCredencialSEISenha.getPassword()));
+	}
 
 	public String obterNumeroAtendimento() {
 		return textAtendimento.getText();
@@ -268,6 +396,8 @@ public class JanelaPrincipal {
 		comboObjetivoRequerimento.setSelectedItem(OpcaoObjetivoRequerimentoEnum.INDEFINIDO);
 		textObjetivoOutro.setText(null);
 		textNupSei.setText(null);
+		textObjetivoOutro.setText(null);
+		textObjetivoOutro.setEnabled(false);
 		
 		if(this.requerimento != null) {
 			Optional<OpcaoObjetivoRequerimentoEnum> opcaoEnum = EnumSet.allOf(OpcaoObjetivoRequerimentoEnum.class)
@@ -276,6 +406,9 @@ public class JanelaPrincipal {
 					.findFirst();
 			if(opcaoEnum.isPresent()) {
 				comboObjetivoRequerimento.setSelectedItem(opcaoEnum.get());
+				if(opcaoEnum.equals(OpcaoObjetivoRequerimentoEnum.OUTRO)) {
+					textObjetivoOutro.setEnabled(true);
+				}
 			}
 			
 			if(this.requerimento.getObjetivoRequerimento() != null) {
