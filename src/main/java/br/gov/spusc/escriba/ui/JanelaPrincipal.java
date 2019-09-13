@@ -1,6 +1,7 @@
 package br.gov.spusc.escriba.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -10,7 +11,9 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.EnumSet;
+import java.util.Iterator;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -26,13 +29,15 @@ import javax.swing.JPasswordField;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-
-import org.openqa.selenium.TimeoutException;
 
 import br.gov.spusc.escriba.CredencialAcesso;
 import br.gov.spusc.escriba.EscribaApp;
 import br.gov.spusc.escriba.OpcaoObjetivoRequerimentoEnum;
+import br.gov.spusc.escriba.OpcaoParecerTecnicoEnum;
 import br.gov.spusc.escriba.pojo.Requerimento;
 
 public class JanelaPrincipal {	
@@ -51,12 +56,14 @@ public class JanelaPrincipal {
 	private JPasswordField textCredencialSEISenha;
 	
 	private JComboBox<OpcaoObjetivoRequerimentoEnum> comboObjetivoRequerimento;
+	private JComboBox<OpcaoParecerTecnicoEnum> comboParecerTecnico;
 
 	private EscribaApp escriba;
 	private CredencialAcessoDialog credencialAcessoSEIDialog;
 	private CredencialAcessoDialog credencialAcessoSPUnetDialog;
 	private Requerimento requerimento;
 	private JPanel panel;
+
 
 
 	public JanelaPrincipal(EscribaApp escriba) {
@@ -66,7 +73,13 @@ public class JanelaPrincipal {
 	
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 1024, 768);
+		frame.getContentPane().setBackground(Color.WHITE);
+		frame.setBackground(Color.WHITE);
+		BorderLayout borderLayout = (BorderLayout) frame.getContentPane().getLayout();
+		borderLayout.setVgap(20);
+		borderLayout.setHgap(20);
+		frame.setResizable(false);
+		frame.setBounds(100, 100, 840, 768);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -86,6 +99,8 @@ public class JanelaPrincipal {
 
 	private void montarMenuPrincipal() {
 		JMenuBar menuBar = new JMenuBar();
+		menuBar.setMargin(new Insets(10, 5, 10, 5));
+		menuBar.setBackground(Color.WHITE);
 		frame.setJMenuBar(menuBar);
 		
 		JMenu mnConfiguraes = new JMenu("Configurações");
@@ -105,17 +120,28 @@ public class JanelaPrincipal {
 
 	private JPanel montarPainelPrincipal() {
 		JPanel panelPrincipal = new JPanel();
-		GridLayout gl_panelPrincipal = new GridLayout(0, 1);
-		gl_panelPrincipal.setVgap(5);
-		gl_panelPrincipal.setHgap(5);
-		panelPrincipal.setLayout(gl_panelPrincipal);
+		panelPrincipal.setBorder(new EmptyBorder(10, 5, 10, 5));
+		panelPrincipal.setBackground(Color.WHITE);
+		GridBagLayout gbl_panelPrincipal = new GridBagLayout();
+		gbl_panelPrincipal.columnWidths = new int[] {0};
+		gbl_panelPrincipal.rowHeights = new int[] {0, 0, 0};
+		gbl_panelPrincipal.columnWeights = new double[]{1.0};
+		gbl_panelPrincipal.rowWeights = new double[]{0.0, 0.0, 1.0};
+		panelPrincipal.setLayout(gbl_panelPrincipal);
 		
 		JPanel panel_2 = new JPanel();
-		panel_2.setBorder(new TitledBorder(null, "Credenciais de Acesso", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panelPrincipal.add(panel_2);
+		panel_2.setBackground(Color.WHITE);
+		panel_2.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "Credenciais de Acesso", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		GridBagConstraints gbc_panel_2 = new GridBagConstraints();
+		gbc_panel_2.fill = GridBagConstraints.BOTH;
+		gbc_panel_2.insets = new Insets(0, 0, 5, 0);
+		gbc_panel_2.gridx = 0;
+		gbc_panel_2.gridy = 0;
+		panelPrincipal.add(panel_2, gbc_panel_2);
 		panel_2.setLayout(new GridLayout(0, 2, 0, 0));
 		
 		panel = new JPanel();
+		panel.setBackground(Color.WHITE);
 		panel_2.add(panel);
 		panel.setBorder(new TitledBorder(null, "SPUnet", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		GridBagLayout gbl_panel = new GridBagLayout();
@@ -153,6 +179,7 @@ public class JanelaPrincipal {
 		panel.add(textCredencialSPUnetSenha, gbc_textCredencialSPUnetSenha);
 		
 		JPanel panel_1 = new JPanel();
+		panel_1.setBackground(Color.WHITE);
 		panel_2.add(panel_1);
 		panel_1.setBorder(new TitledBorder(null, "SEI", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		GridBagLayout gbl_panel_1 = new GridBagLayout();
@@ -190,14 +217,21 @@ public class JanelaPrincipal {
 		panel_1.add(textCredencialSEISenha, gbc_textCredencialSEISenha);
 		
 		JPanel panel_3 = new JPanel();
+		panel_3.setBackground(Color.WHITE);
 		panel_3.setBorder(new TitledBorder(null, "Requerimento SPUnet", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panelPrincipal.add(panel_3);
+		GridBagConstraints gbc_panel_3 = new GridBagConstraints();
+		gbc_panel_3.insets = new Insets(0, 0, 5, 0);
+		gbc_panel_3.fill = GridBagConstraints.BOTH;
+		gbc_panel_3.gridx = 0;
+		gbc_panel_3.gridy = 1;
+		panelPrincipal.add(panel_3, gbc_panel_3);
 		GridBagLayout gbl_panel_3 = new GridBagLayout();
-		gbl_panel_3.columnWidths = new int[] {120, 200, 120, 300};
+		gbl_panel_3.columnWidths = new int[] {200, 120, 160, 300};
 		gbl_panel_3.rowHeights = new int[] {30, 30, 30};
-		gbl_panel_3.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0};
+		gbl_panel_3.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0};
 		gbl_panel_3.rowWeights = new double[]{0.0, 0.0, 0.0};
 		panel_3.setLayout(gbl_panel_3);
+		
 		JLabel label = new JLabel("Nº de Atendimento: ", JLabel.RIGHT);
 		GridBagConstraints gbc_label = new GridBagConstraints();
 		gbc_label.fill = GridBagConstraints.BOTH;
@@ -205,6 +239,7 @@ public class JanelaPrincipal {
 		gbc_label.gridx = 0;
 		gbc_label.gridy = 0;
 		panel_3.add(label, gbc_label);
+		
 		textAtendimento = new JTextField();
 		GridBagConstraints gbc_textAtendimento = new GridBagConstraints();
 		gbc_textAtendimento.fill = GridBagConstraints.BOTH;
@@ -213,34 +248,16 @@ public class JanelaPrincipal {
 		gbc_textAtendimento.gridy = 0;
 		panel_3.add(textAtendimento, gbc_textAtendimento);
 		textAtendimento.setText("SC03148/2019");
-		JButton botaoObterDadosSPUnet = new JButton("Obter dados do requerimento");
+		
+		JButton botaoObterDadosSPUnet = new JButton("Obter Requerimento");
 		GridBagConstraints gbc_botaoObterDadosSPUnet = new GridBagConstraints();
-		gbc_botaoObterDadosSPUnet.fill = GridBagConstraints.BOTH;
-		gbc_botaoObterDadosSPUnet.insets = new Insets(0, 0, 5, 5);
+		gbc_botaoObterDadosSPUnet.anchor = GridBagConstraints.WEST;
+		gbc_botaoObterDadosSPUnet.gridwidth = 2;
+		gbc_botaoObterDadosSPUnet.insets = new Insets(0, 0, 5, 0);
 		gbc_botaoObterDadosSPUnet.gridx = 2;
 		gbc_botaoObterDadosSPUnet.gridy = 0;
 		panel_3.add(botaoObterDadosSPUnet, gbc_botaoObterDadosSPUnet);
-		botaoObterDadosSPUnet.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					validarInputObrigatorio(getTextCredencialSPUnetLogin(), "Informe o login do SPUnet");
-					validarInputObrigatorio(getTextCredencialSPUnetSenha(), "Informe a senha do SPUnet"); 
-					if(textAtendimento.getText().isBlank()) {
-						exibirMensagem("Informe o número do atendimento SPUnet");
-						textAtendimento.requestFocus();
-						return;
-					}
-					escriba.obterDadosRequerimentoSPUnet();
-				} catch (TimeoutException timeoutException) {
-					exibirMensagem("O SPUnet parece não estar respondendo.\n\rVerifique sua conexão de rede ou aguarde o retorno do sistema.");
-				} 
-				catch (Exception e1) {
-					exibirMensagem(e1.getMessage());
-				}
-			}
-		});
+		botaoObterDadosSPUnet.addActionListener(clicouObterRequerimento());
 		JLabel label_7 = new JLabel("NUP SEI: ", JLabel.RIGHT);
 		GridBagConstraints gbc_label_7 = new GridBagConstraints();
 		gbc_label_7.fill = GridBagConstraints.BOTH;
@@ -259,42 +276,125 @@ public class JanelaPrincipal {
 		
 		// NUP SEi
 		JLabel label_5 = new JLabel("Objetivo do Requerimento:");
+		label_5.setHorizontalAlignment(SwingConstants.RIGHT);
 		GridBagConstraints gbc_label_5 = new GridBagConstraints();
 		gbc_label_5.fill = GridBagConstraints.BOTH;
-		gbc_label_5.insets = new Insets(0, 0, 0, 5);
+		gbc_label_5.insets = new Insets(0, 0, 5, 5);
 		gbc_label_5.gridx = 0;
 		gbc_label_5.gridy = 2;
 		panel_3.add(label_5, gbc_label_5);
 		
 		comboObjetivoRequerimento = new JComboBox<OpcaoObjetivoRequerimentoEnum>();
+		comboObjetivoRequerimento.addActionListener(selecionouObjetivoRequerimento());
 		GridBagConstraints gbc_comboObjetivoRequerimento = new GridBagConstraints();
+		gbc_comboObjetivoRequerimento.gridwidth = 2;
 		gbc_comboObjetivoRequerimento.fill = GridBagConstraints.BOTH;
-		gbc_comboObjetivoRequerimento.insets = new Insets(0, 0, 0, 5);
+		gbc_comboObjetivoRequerimento.insets = new Insets(0, 0, 5, 5);
 		gbc_comboObjetivoRequerimento.gridx = 1;
 		gbc_comboObjetivoRequerimento.gridy = 2;
 		panel_3.add(comboObjetivoRequerimento, gbc_comboObjetivoRequerimento);
 		comboObjetivoRequerimento.setModel(new DefaultComboBoxModel<OpcaoObjetivoRequerimentoEnum>(OpcaoObjetivoRequerimentoEnum.values()));
-		
-		JLabel label_6 = new JLabel("Outro: ", JLabel.RIGHT);
-		GridBagConstraints gbc_label_6 = new GridBagConstraints();
-		gbc_label_6.fill = GridBagConstraints.BOTH;
-		gbc_label_6.insets = new Insets(0, 0, 0, 5);
-		gbc_label_6.gridx = 2;
-		gbc_label_6.gridy = 2;
-		panel_3.add(label_6, gbc_label_6);
 		textObjetivoOutro = new JTextField();
 		textObjetivoOutro.setEnabled(false);
 		GridBagConstraints gbc_textObjetivoOutro = new GridBagConstraints();
+		gbc_textObjetivoOutro.insets = new Insets(0, 0, 5, 0);
 		gbc_textObjetivoOutro.fill = GridBagConstraints.BOTH;
 		gbc_textObjetivoOutro.gridx = 3;
 		gbc_textObjetivoOutro.gridy = 2;
 		panel_3.add(textObjetivoOutro, gbc_textObjetivoOutro);
 		
+		JPanel panel_4 = new JPanel();
+		panel_4.setBackground(Color.WHITE);
+		panel_4.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "An\u00E1lise e Instru\u00E7\u00E3o do Processo no SEI", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		GridBagConstraints gbc_panel_4 = new GridBagConstraints();
+		gbc_panel_4.fill = GridBagConstraints.BOTH;
+		gbc_panel_4.gridx = 0;
+		gbc_panel_4.gridy = 2;
+		panelPrincipal.add(panel_4, gbc_panel_4);
+		GridBagLayout gbl_panel_4 = new GridBagLayout();
+		gbl_panel_4.columnWidths = new int[] {80, 400, 120};
+		gbl_panel_4.rowHeights = new int[] {30};
+		gbl_panel_4.columnWeights = new double[]{0.0, 0.0, 0.0};
+		gbl_panel_4.rowWeights = new double[]{0.0};
+		panel_4.setLayout(gbl_panel_4);
+		
+		JLabel lblAnlise = new JLabel("Análise:", JLabel.RIGHT);
+		GridBagConstraints gbc_lblAnlise = new GridBagConstraints();
+		gbc_lblAnlise.anchor = GridBagConstraints.EAST;
+		gbc_lblAnlise.insets = new Insets(0, 0, 0, 5);
+		gbc_lblAnlise.gridx = 0;
+		gbc_lblAnlise.gridy = 0;
+		panel_4.add(lblAnlise, gbc_lblAnlise);
+		
+		comboParecerTecnico = new JComboBox<OpcaoParecerTecnicoEnum>();
+		comboParecerTecnico.setModel(new DefaultComboBoxModel<OpcaoParecerTecnicoEnum>(OpcaoParecerTecnicoEnum.values()));
+		GridBagConstraints gbc_comboBox = new GridBagConstraints();
+		gbc_comboBox.insets = new Insets(0, 0, 0, 5);
+		gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
+		gbc_comboBox.gridx = 1;
+		gbc_comboBox.gridy = 0;
+		panel_4.add(comboParecerTecnico, gbc_comboBox);
+		
+		JButton btnNewButton = new JButton("Instruir Processo");
+		btnNewButton.addActionListener(clicouInstruirProcesso());
+		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
+		gbc_btnNewButton.gridx = 2;
+		gbc_btnNewButton.gridy = 0;
+		panel_4.add(btnNewButton, gbc_btnNewButton);
+		
 		return panelPrincipal;
+	}
+
+	private ActionListener clicouObterRequerimento() {
+		return new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					validarInputObrigatorio(getTextCredencialSPUnetLogin(), "Informe o login do SPUnet");
+					validarInputObrigatorio(getTextCredencialSPUnetSenha(), "Informe a senha do SPUnet");
+					validarInputObrigatorio(textAtendimento, "Informe o número do atendimento SPUnet");
+					escriba.obterDadosRequerimentoSPUnet();
+				} catch (Exception e1) {
+					exibirMensagem(e1.getMessage());
+				}
+			}
+		};
+	}
+
+	private ActionListener clicouInstruirProcesso() {
+		return new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					validarInputObrigatorio(getTextCredencialSEILogin(), "Informe o login do SEI");
+					validarInputObrigatorio(getTextCredencialSEISenha(), "Informe a senha do SEI");
+					validarInputObrigatorio(textNupSei, "NUP SEI não informado");
+					if(comboParecerTecnico.getSelectedItem() == null) {
+						exibirMensagem("Opção de parecer selecionada é inválida");
+						comboParecerTecnico.requestFocus();
+						return;
+					}
+					requerimento.setProcedimentoFormatado(textNupSei.getText());
+					escriba.instruirProcessoSEI();					
+				} catch (Exception e1) {
+					exibirMensagem(e1.getMessage());
+				}
+				
+			}
+		};
+	}
+	
+	private ActionListener selecionouObjetivoRequerimento() {
+		return new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				OpcaoObjetivoRequerimentoEnum opcaoSelecionada = (OpcaoObjetivoRequerimentoEnum) comboObjetivoRequerimento.getSelectedItem();
+				popularOpcoesParecerTecnico(opcaoSelecionada);
+			}
+		};
 	}
 
 	private JPanel montarPainelRodape() {
 		JPanel panelRodape = new JPanel();
+		panelRodape.setBackground(Color.WHITE);
 		panelRodape.setLayout(new BorderLayout(0, 0));
 		
 		JLabel lblNewLabel = new JLabel("Console:");
@@ -309,6 +409,7 @@ public class JanelaPrincipal {
 
 	private JSplitPane montarDivisorPainelPrincipalPainelRodape() {
 		JSplitPane splitPane = new JSplitPane();
+		splitPane.setBackground(Color.WHITE);
 		splitPane.setContinuousLayout(true);
 		splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		frame.getContentPane().add(splitPane, BorderLayout.CENTER);
@@ -371,6 +472,14 @@ public class JanelaPrincipal {
 		return textCredencialSPUnetSenha;
 	}
 
+	public JTextField getTextCredencialSEILogin() {
+		return textCredencialSEILogin;
+	}
+
+	public JPasswordField getTextCredencialSEISenha() {
+		return textCredencialSEISenha;
+	}
+
 	public CredencialAcesso obterCredencialSPUnet() {
 		return new CredencialAcesso(
 				textCredencialSPUnetLogin.getText(), 
@@ -404,8 +513,10 @@ public class JanelaPrincipal {
 				.stream()
 					.filter(e -> e.getId().equals(requerimento.getObjetivoRequerimento().getId()))
 					.findFirst();
+			OpcaoObjetivoRequerimentoEnum objetivoDoRequerimento = opcaoEnum.get();
+			popularOpcoesParecerTecnico(objetivoDoRequerimento);
 			if(opcaoEnum.isPresent()) {
-				comboObjetivoRequerimento.setSelectedItem(opcaoEnum.get());
+				comboObjetivoRequerimento.setSelectedItem(objetivoDoRequerimento);
 				if(opcaoEnum.equals(OpcaoObjetivoRequerimentoEnum.OUTRO)) {
 					textObjetivoOutro.setEnabled(true);
 				}
@@ -417,6 +528,18 @@ public class JanelaPrincipal {
 			
 			textNupSei.setText(this.requerimento.getProcedimentoFormatado());
 		}
+	}
+
+	private void popularOpcoesParecerTecnico(OpcaoObjetivoRequerimentoEnum opcaoEnum) {
+		Stream<OpcaoParecerTecnicoEnum> opcoesParecer = EnumSet.allOf(OpcaoParecerTecnicoEnum.class)
+			.stream()
+				.filter(e -> e.getObjetivoRequerimentoEnum().equals(opcaoEnum));
+		DefaultComboBoxModel<OpcaoParecerTecnicoEnum> model = new DefaultComboBoxModel<OpcaoParecerTecnicoEnum>();
+		Iterator<OpcaoParecerTecnicoEnum> iterator = opcoesParecer.iterator();
+		while(iterator.hasNext()) {
+			model.addElement(iterator.next());
+		}
+		comboParecerTecnico.setModel(model);		
 	}
 
 }

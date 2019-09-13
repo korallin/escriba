@@ -96,9 +96,11 @@ public class EscribaApp {
 		}
 		if (config.containsKey(CONFIG_CREDENCIAL_SEI_LOGIN)) {
 			credencialAcessoSEI.setLogin(config.getProperty((String) CONFIG_CREDENCIAL_SEI_LOGIN));
+			janelaPrincipal.getTextCredencialSEILogin().setText(getCredencialAcessoSEI().getLogin());
 		}
 		if (config.containsKey(CONFIG_CREDENCIAL_SEI_SENHA)) {
 			credencialAcessoSEI.setSenha(config.getProperty((String) CONFIG_CREDENCIAL_SEI_SENHA));
+			janelaPrincipal.getTextCredencialSEISenha().setText(getCredencialAcessoSEI().getSenha());
 		}
 
 	}
@@ -197,7 +199,7 @@ public class EscribaApp {
 		}).start();
 	}
 	
-	public void criarParecerTecnicoSEI() {
+	public void instruirProcessoSEI() {
 		new Thread(new Runnable() {
 	
 			@Override
