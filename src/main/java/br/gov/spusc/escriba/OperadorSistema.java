@@ -4,7 +4,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.function.Function;
 import java.util.logging.Level;
 
 import org.json.JSONObject;
@@ -25,6 +27,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class OperadorSistema {
 	
 	protected WebDriver driver;
+	protected String janelaPrincipal;
 	
 	void inicializarDriver() {
 		System.setProperty("webdriver.chrome.driver", "chromedriver.exe");		
@@ -68,5 +71,45 @@ public class OperadorSistema {
             throw new RuntimeException(ex.getCause());
         }
     }
+	
+	public void fecharPopup() {
+		String primeiraJanela = "";
+		for (String tituloJanela : driver.getWindowHandles()) {
+			if (!primeiraJanela.equalsIgnoreCase("")) {
+				driver.switchTo().window(tituloJanela);
+				driver.close();
+			} else {
+				primeiraJanela = tituloJanela;
+			}
+		}
 
+		driver.switchTo().window(primeiraJanela);
+		janelaPrincipal = driver.getWindowHandle();
+	}
+
+	public static WebElement encontrarElemento(Wait<WebDriver> wait, By by) {
+		return wait.until(new Function<WebDriver, WebElement>() {
+			@Override
+			public WebElement apply(WebDriver t) {
+				WebElement element = t.findElement(by);
+				if (element == null) {
+					System.out.println("Elemento não encontrado...");
+				}
+				return element;
+			}
+		});
+	}
+	
+	public static List<WebElement> encontrarElementos(Wait<WebDriver> wait, By by) {
+		return wait.until(new Function<WebDriver, List<WebElement>>() {
+			@Override
+			public List<WebElement> apply(WebDriver t) {
+				List<WebElement> elements = t.findElements(by);
+				if (elements == null) {
+					System.out.println("Elemento não encontrado...");
+				}
+				return elements;
+			}
+		});
+	}
 }

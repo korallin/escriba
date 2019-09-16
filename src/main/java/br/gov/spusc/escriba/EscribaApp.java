@@ -7,12 +7,16 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.openqa.selenium.TimeoutException;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
+import br.gov.spusc.escriba.pojo.ObjetivoRequerimento;
+import br.gov.spusc.escriba.pojo.Requerente;
 import br.gov.spusc.escriba.pojo.Requerimento;
 import br.gov.spusc.escriba.ui.JanelaPrincipal;
 
@@ -33,6 +37,7 @@ public class EscribaApp {
 	private Requerimento requerimento;
 
 	private Properties config;
+	private boolean mockSPUnet = false;
 
 	/**
 	 * Launch the application.
@@ -168,35 +173,50 @@ public class EscribaApp {
 	}
 
 	public void obterDadosRequerimentoSPUnet() {
-		new Thread(new Runnable() {
-	
-			@Override
-			public void run() {
-				try {
-					log("Iniciando leitura do requerimento do SPUnet...");
-					OperadorSPUnet operador = new OperadorSPUnet();
-					
-					log("Inicializando driver... ", false);
-					operador.inicializarDriver();
-					log("OK!");
-					
-					log("Iniciando autenticação no sistema... ", false);
-					operador.fazerLogin(janelaPrincipal.obterCredencialSPUnet());
-					log("OK!");
-					
-					log("Obtendo dados do requerimento...");
-					requerimento = operador.obterRequerimentoPorNumeroAtendimento(janelaPrincipal.obterNumeroAtendimento());
-					log(requerimento.toString());
-					
-					janelaPrincipal.setRequerimento(requerimento);
-					operador.encerrarDriver();				
-				} catch (TimeoutException te) {
-					log("O SPUnet parece não estar funcionando. Verifique sua conexão de rede e/ou aguarde o retorno do sistema.");
-				} catch (Exception e) {
-					log(e.getMessage());
-				}				
-			}
-		}).start();
+		if(mockSPUnet) {
+			requerimento = new Requerimento();
+			requerimento.setNumeroAtendimento("SC/012345");
+			requerimento.setProcedimentoFormatado("10154.125690/2019-27");
+			
+			requerimento.setObjetivoRequerimento(new ObjetivoRequerimento());
+			requerimento.getObjetivoRequerimento().setId(OpcaoObjetivoRequerimentoEnum.USUCAPIAO_EXTRAJUDICIAL.getId());
+			
+			requerimento.setRequerente(new Requerente());
+			requerimento.getRequerente().setNome("JOÃO JOSÉ DA SILVA E SOUZA");
+			requerimento.getRequerente().setCpfCnpj("071.533.494-80");
+			
+			janelaPrincipal.setRequerimento(requerimento);
+		} else {
+			new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					try {
+						log("Iniciando leitura do requerimento do SPUnet...");
+						OperadorSPUnet operador = new OperadorSPUnet();
+						
+						log("Inicializando driver... ", false);
+						operador.inicializarDriver();
+						log("OK!");
+						
+						log("Iniciando autenticação no sistema... ", false);
+						operador.fazerLogin(janelaPrincipal.obterCredencialSPUnet());
+						log("OK!");
+						
+						log("Obtendo dados do requerimento...");
+						requerimento = operador.obterRequerimentoPorNumeroAtendimento(janelaPrincipal.obterNumeroAtendimento());
+						log(requerimento.toString());
+						
+						janelaPrincipal.setRequerimento(requerimento);
+						operador.encerrarDriver();				
+					} catch (TimeoutException te) {
+						log("O SPUnet parece não estar funcionando. Verifique sua conexão de rede e/ou aguarde o retorno do sistema.");
+					} catch (Exception e) {
+						log(e.getMessage());
+					}				
+				}
+			}).start();
+		}
 	}
 	
 	public void instruirProcessoSEI() {
@@ -204,9 +224,9 @@ public class EscribaApp {
 	
 			@Override
 			public void run() {
+				log("Iniciando a instrução do processo SEI...");
+				OperadorSEI operador = new OperadorSEI();
 				try {
-					log("Iniciando leitura do requerimento do SPUnet...");
-					OperadorSEI operador = new OperadorSEI();
 					
 					log("Inicializando driver... ", false);
 					operador.inicializarDriver();
@@ -216,12 +236,33 @@ public class EscribaApp {
 					operador.fazerLogin(janelaPrincipal.obterCredencialSEI());
 					log("OK!");
 					
-					// operador.encerrarDriver();				
+					operador.fecharPopup();
+					
+					operador.acessarProcesso(requerimento.getProcedimentoFormatado());
+					
+					String documentoGerado = operador.incluirDocumento("Parecer", 3864629, obterMapaSubstituicoes());
+					log("Documento gerado: " + documentoGerado);
+					
 				} catch (TimeoutException te) {
-					log("O SPUnet parece não estar funcionando. Verifique sua conexão de rede e/ou aguarde o retorno do sistema.");
+					log("O SEI parece não estar funcionando. Verifique sua conexão de rede e/ou aguarde o retorno do sistema.");
 				} catch (Exception e) {
 					log(e.getMessage());
+				} finally {
+					operador.encerrarDriver();
 				}				
+				
+			}
+
+			private Map<String, String> obterMapaSubstituicoes() {
+				Map<String, String> mapa = new HashMap<String, String>();
+				OpcaoConclusaoParecerTecnicoDeclaracaoDominioEnum conclusaoSelecionada = 
+						(OpcaoConclusaoParecerTecnicoDeclaracaoDominioEnum) janelaPrincipal.getComboParecerTecnico().getSelectedItem(); 
+				mapa.put("Analise.Conclusao", conclusaoSelecionada.getConclusao());
+				mapa.put("Requerimento.ProcedimentoFormatado", requerimento.getProcedimentoFormatado());
+				mapa.put("Requerimento.NumeroAtendimento", requerimento.getNumeroAtendimento());
+				mapa.put("Requerimento.Requerente.nome", requerimento.getRequerente().getNome());
+				mapa.put("Requerimento.Requerente.cpfCnpj", requerimento.getRequerente().getCpfCnpj());
+				return mapa;
 			}
 		}).start();
 	}
