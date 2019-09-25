@@ -5,12 +5,12 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.function.Function;
 import java.util.logging.Level;
 
 import org.json.JSONObject;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -27,10 +27,10 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class OperadorSistema {
 	
 	protected WebDriver driver;
-	protected String janelaPrincipal;
+	protected String janelaPrincipalDoNavegador;
 	
 	void inicializarDriver() {
-		System.setProperty("webdriver.chrome.driver", "chromedriver.exe");		
+		System.setProperty("webdriver.chrome.driver", "chromedriver77.exe");		
 		ChromeOptions options = new ChromeOptions();
 		
 		DesiredCapabilities cap = DesiredCapabilities.chrome();
@@ -84,7 +84,7 @@ public class OperadorSistema {
 		}
 
 		driver.switchTo().window(primeiraJanela);
-		janelaPrincipal = driver.getWindowHandle();
+		janelaPrincipalDoNavegador = driver.getWindowHandle();
 	}
 
 	public static WebElement encontrarElemento(Wait<WebDriver> wait, By by) {
@@ -93,7 +93,7 @@ public class OperadorSistema {
 			public WebElement apply(WebDriver t) {
 				WebElement element = t.findElement(by);
 				if (element == null) {
-					System.out.println("Elemento não encontrado...");
+					System.out.println("Elemento não encontrado: " + by.toString());
 				}
 				return element;
 			}
@@ -106,10 +106,16 @@ public class OperadorSistema {
 			public List<WebElement> apply(WebDriver t) {
 				List<WebElement> elements = t.findElements(by);
 				if (elements == null) {
-					System.out.println("Elemento não encontrado...");
+					System.out.println("Nenhum elemento não encontrado: " + by.toString());
 				}
 				return elements;
 			}
 		});
+	}
+	
+	protected Wait<WebDriver> gerarWait(int segundos, int intervaloTentativas) {
+		Wait<WebDriver> wait = new FluentWait<WebDriver>(driver).withTimeout(Duration.ofSeconds(segundos))
+				.pollingEvery(Duration.ofSeconds(intervaloTentativas)).ignoring(NoSuchElementException.class);
+		return wait;
 	}
 }

@@ -1,6 +1,8 @@
 package br.gov.spusc.escriba.pojo;
 
-public class Requerente {
+import br.gov.spusc.escriba.MarcacaoDeTexto;
+
+public class Requerente extends MarcacaoDeTexto {
 	
 	private String nome;
 	

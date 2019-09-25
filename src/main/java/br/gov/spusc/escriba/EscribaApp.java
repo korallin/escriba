@@ -7,7 +7,9 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -15,15 +17,20 @@ import org.openqa.selenium.TimeoutException;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
+import br.gov.spusc.escriba.pojo.Imovel;
 import br.gov.spusc.escriba.pojo.ObjetivoRequerimento;
 import br.gov.spusc.escriba.pojo.Requerente;
-import br.gov.spusc.escriba.pojo.Requerimento;
+import br.gov.spusc.escriba.pojo.RequerimentoSPUnet;
+import br.gov.spusc.escriba.pojo.SolicitacaoDocumentoSEI;
 import br.gov.spusc.escriba.ui.JanelaPrincipal;
 
 @SpringBootApplication
 @ComponentScan(basePackages = { "br.gov.economia.seddm.spu" })
 public class EscribaApp {
 
+	private static final int NUMERO_DOCUMENTO_MODELO_PARECER = 3864629;
+	private static final int NUMERO_DOCUMENTO_MODELO_DECLARACAO = 3865012;
+	
 	private static final String CONFIG_ARQ_COMENTARIO = "Arquivo de Configuração do Escriba";
 	private static final String CONFIG_ARQ_CAMINHO = "escriba.conf";
 	private static final String CONFIG_CREDENCIAL_SPUNET_LOGIN = "credencial.spunet.login";
@@ -34,10 +41,10 @@ public class EscribaApp {
 	private JanelaPrincipal janelaPrincipal;
 	private CredencialAcesso credencialAcessoSPUnet;
 	private CredencialAcesso credencialAcessoSEI;
-	private Requerimento requerimento;
+	private RequerimentoSPUnet requerimento;
 
 	private Properties config;
-	private boolean mockSPUnet = false;
+	private boolean mockSPUnet = true;
 
 	/**
 	 * Launch the application.
@@ -174,16 +181,26 @@ public class EscribaApp {
 
 	public void obterDadosRequerimentoSPUnet() {
 		if(mockSPUnet) {
-			requerimento = new Requerimento();
+			requerimento = new RequerimentoSPUnet();
 			requerimento.setNumeroAtendimento("SC/012345");
 			requerimento.setProcedimentoFormatado("10154.125690/2019-27");
 			
 			requerimento.setObjetivoRequerimento(new ObjetivoRequerimento());
-			requerimento.getObjetivoRequerimento().setId(OpcaoObjetivoRequerimentoEnum.USUCAPIAO_EXTRAJUDICIAL.getId());
+			requerimento.getObjetivoRequerimento().setId(OpcaoObjetivoDeclaracaoDominio.USUCAPIAO_EXTRAJUDICIAL.getId());
 			
 			requerimento.setRequerente(new Requerente());
 			requerimento.getRequerente().setNome("JOÃO JOSÉ DA SILVA E SOUZA");
 			requerimento.getRequerente().setCpfCnpj("071.533.494-80");
+			
+			requerimento.setImovel(new Imovel());
+			requerimento.getImovel().setCep("88058-000");
+			requerimento.getImovel().setTipoLogradouro("RUA");
+			requerimento.getImovel().setLogradouro("DAS COUVES");
+			requerimento.getImovel().setNumero("123");
+			requerimento.getImovel().setComplemento("CASA");
+			requerimento.getImovel().setMunicipio("SANTA ILUSAO");
+			requerimento.getImovel().setBairro("FELICIDADE");
+			requerimento.getImovel().setUf("SC");
 			
 			janelaPrincipal.setRequerimento(requerimento);
 		} else {
@@ -228,20 +245,48 @@ public class EscribaApp {
 				OperadorSEI operador = new OperadorSEI();
 				try {
 					
-					log("Inicializando driver... ", false);
+					log("Inicializando driver... ");
 					operador.inicializarDriver();
-					log("OK!");
 					
-					log("Iniciando autenticação no sistema... ", false);
+					log("Iniciando autenticação no sistema... ");
 					operador.fazerLogin(janelaPrincipal.obterCredencialSEI());
-					log("OK!");
 					
 					operador.fecharPopup();
 					
 					operador.acessarProcesso(requerimento.getProcedimentoFormatado());
 					
-					String documentoGerado = operador.incluirDocumento("Parecer", 3864629, obterMapaSubstituicoes());
-					log("Documento gerado: " + documentoGerado);
+					Map<String, List<String>> mapaDeMarcacoes = obterMapaSubstituicoes();
+					
+					SolicitacaoDocumentoSEI parecerACriar = new SolicitacaoDocumentoSEI(
+							requerimento.getProcedimentoFormatado(), 
+							"Parecer", 
+							NUMERO_DOCUMENTO_MODELO_PARECER, 
+							mapaDeMarcacoes);
+					// SolicitacaoDocumentoSEI parecerGerado = operador.inserirDocumento(parecerACriar);
+					// log("Documento gerado: " + parecerGerado.getIdentificacaoDocumentoGerado() + "(" + parecerGerado.getNumeroDocumentoGerado() + ")");
+					
+					OpcaoConteudoDeclaracaoDeDominio declaracaoSelecionada = OpcaoConteudoDeclaracaoDeDominio.obter(
+							(OpcaoObjetivoDeclaracaoDominio) janelaPrincipal.getComboObjetivoRequerimento().getSelectedItem(),
+							((OpcaoParecerTecnicoDeclaracaoDominio) janelaPrincipal.getComboParecerTecnico().getSelectedItem()).getComInteresse()
+							);
+					
+					// a ordem das chaves deste mapa será importante, por isso LinkedHashMap
+					LinkedHashMap<String, List<String>> mapaOrdenado = new LinkedHashMap<String, List<String>>();
+					mapaOrdenado.put("Declaracao.Conteudo", declaracaoSelecionada.getConclusao());
+					
+					List<String> valorIdentificacaoDocumento = new ArrayList<String>();
+					// valorIdentificacaoDocumento.add(parecerGerado.getIdentificacaoDocumentoGerado());
+					mapaOrdenado.put("Parecer.IdentificacaoDocumento", valorIdentificacaoDocumento);
+					
+					mapaOrdenado.putAll(mapaDeMarcacoes);
+					SolicitacaoDocumentoSEI declaracaoACriar = new SolicitacaoDocumentoSEI(
+							requerimento.getProcedimentoFormatado(),
+							"Declaração", 
+							NUMERO_DOCUMENTO_MODELO_DECLARACAO, 
+							mapaOrdenado);
+					SolicitacaoDocumentoSEI declaracaoGerada = operador.inserirDocumento(declaracaoACriar);
+					log("Documento gerado: " + declaracaoGerada.getIdentificacaoDocumentoGerado() + "(" + declaracaoGerada.getNumeroDocumentoGerado() + ")");
+					
 					
 				} catch (TimeoutException te) {
 					log("O SEI parece não estar funcionando. Verifique sua conexão de rede e/ou aguarde o retorno do sistema.");
@@ -253,18 +298,19 @@ public class EscribaApp {
 				
 			}
 
-			private Map<String, String> obterMapaSubstituicoes() {
-				Map<String, String> mapa = new HashMap<String, String>();
-				OpcaoConclusaoParecerTecnicoDeclaracaoDominioEnum conclusaoSelecionada = 
-						(OpcaoConclusaoParecerTecnicoDeclaracaoDominioEnum) janelaPrincipal.getComboParecerTecnico().getSelectedItem(); 
-				mapa.put("Analise.Conclusao", conclusaoSelecionada.getConclusao());
-				mapa.put("Requerimento.ProcedimentoFormatado", requerimento.getProcedimentoFormatado());
-				mapa.put("Requerimento.NumeroAtendimento", requerimento.getNumeroAtendimento());
-				mapa.put("Requerimento.Requerente.nome", requerimento.getRequerente().getNome());
-				mapa.put("Requerimento.Requerente.cpfCnpj", requerimento.getRequerente().getCpfCnpj());
-				return mapa;
-			}
 		}).start();
 	}
 
+	private Map<String, List<String>> obterMapaSubstituicoes() {
+		OpcaoParecerTecnicoDeclaracaoDominio conclusaoSelecionada = 
+				(OpcaoParecerTecnicoDeclaracaoDominio) janelaPrincipal.getComboParecerTecnico().getSelectedItem();
+		
+		Map<String, List<String>> mapa = requerimento.preencherMapaDeMarcacoesValores();
+		
+		List<String> conteudoParecerTecnico = new ArrayList<String>();
+		conteudoParecerTecnico.add(conclusaoSelecionada.getConclusao());
+		mapa.put("Analise.Conclusao", conteudoParecerTecnico);
+		
+		return mapa;
+	}
 }

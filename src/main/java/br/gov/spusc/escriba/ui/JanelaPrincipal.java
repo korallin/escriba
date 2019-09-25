@@ -35,9 +35,9 @@ import javax.swing.border.TitledBorder;
 
 import br.gov.spusc.escriba.CredencialAcesso;
 import br.gov.spusc.escriba.EscribaApp;
-import br.gov.spusc.escriba.OpcaoConclusaoParecerTecnicoDeclaracaoDominioEnum;
-import br.gov.spusc.escriba.OpcaoObjetivoRequerimentoEnum;
-import br.gov.spusc.escriba.pojo.Requerimento;
+import br.gov.spusc.escriba.OpcaoObjetivoDeclaracaoDominio;
+import br.gov.spusc.escriba.OpcaoParecerTecnicoDeclaracaoDominio;
+import br.gov.spusc.escriba.pojo.RequerimentoSPUnet;
 
 public class JanelaPrincipal {
 
@@ -54,13 +54,13 @@ public class JanelaPrincipal {
 	private JPasswordField textCredencialSPUnetSenha;
 	private JPasswordField textCredencialSEISenha;
 
-	private JComboBox<OpcaoObjetivoRequerimentoEnum> comboObjetivoRequerimento;
-	private JComboBox<OpcaoConclusaoParecerTecnicoDeclaracaoDominioEnum> comboParecerTecnico;
+	private JComboBox<OpcaoObjetivoDeclaracaoDominio> comboObjetivoRequerimento;
+	private JComboBox<OpcaoParecerTecnicoDeclaracaoDominio> comboParecerTecnico;
 
 	private EscribaApp escriba;
 	private CredencialAcessoDialog credencialAcessoSEIDialog;
 	private CredencialAcessoDialog credencialAcessoSPUnetDialog;
-	private Requerimento requerimento;
+	private RequerimentoSPUnet requerimento;
 	private JPanel panel;
 
 	public JanelaPrincipal(EscribaApp escriba) {
@@ -282,7 +282,7 @@ public class JanelaPrincipal {
 		gbc_label_5.gridy = 2;
 		panel_3.add(label_5, gbc_label_5);
 
-		comboObjetivoRequerimento = new JComboBox<OpcaoObjetivoRequerimentoEnum>();
+		comboObjetivoRequerimento = new JComboBox<OpcaoObjetivoDeclaracaoDominio>();
 		comboObjetivoRequerimento.addActionListener(selecionouObjetivoRequerimento());
 		GridBagConstraints gbc_comboObjetivoRequerimento = new GridBagConstraints();
 		gbc_comboObjetivoRequerimento.gridwidth = 2;
@@ -326,8 +326,8 @@ public class JanelaPrincipal {
 		gbc_lblAnlise.gridy = 0;
 		panel_4.add(lblAnlise, gbc_lblAnlise);
 
-		comboParecerTecnico = new JComboBox<OpcaoConclusaoParecerTecnicoDeclaracaoDominioEnum>();
-		popularOpcoesParecerTecnico((OpcaoObjetivoRequerimentoEnum) comboObjetivoRequerimento.getSelectedItem());
+		comboParecerTecnico = new JComboBox<OpcaoParecerTecnicoDeclaracaoDominio>();
+		popularOpcoesParecerTecnico((OpcaoObjetivoDeclaracaoDominio) comboObjetivoRequerimento.getSelectedItem());
 		GridBagConstraints gbc_comboBox = new GridBagConstraints();
 		gbc_comboBox.insets = new Insets(0, 0, 0, 5);
 		gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
@@ -347,7 +347,7 @@ public class JanelaPrincipal {
 
 	private void popularOpcoesObjetivoRequerimento() {
 		comboObjetivoRequerimento.setModel(
-				new DefaultComboBoxModel<OpcaoObjetivoRequerimentoEnum>(OpcaoObjetivoRequerimentoEnum.values()));
+				new DefaultComboBoxModel<OpcaoObjetivoDeclaracaoDominio>(OpcaoObjetivoDeclaracaoDominio.values()));
 	}
 
 	private ActionListener clicouObterRequerimento() {
@@ -381,6 +381,9 @@ public class JanelaPrincipal {
 					if (requerimento == null) {
 						throw new Exception("Requerimento SPUnet não carregado");
 					}
+					if(((OpcaoParecerTecnicoDeclaracaoDominio) comboParecerTecnico.getSelectedItem()).equals(OpcaoParecerTecnicoDeclaracaoDominio.INDEFINIDO)) {
+						throw new Exception("Selecione uma opção de análise");
+					}
 					requerimento.setProcedimentoFormatado(textNupSei.getText());
 					escriba.instruirProcessoSEI();
 				} catch (Exception e1) {
@@ -394,8 +397,7 @@ public class JanelaPrincipal {
 	private ActionListener selecionouObjetivoRequerimento() {
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				OpcaoObjetivoRequerimentoEnum opcaoSelecionada = (OpcaoObjetivoRequerimentoEnum) comboObjetivoRequerimento
-						.getSelectedItem();
+				// OpcaoObjetivoDeclaracaoDominio opcaoSelecionada = (OpcaoObjetivoDeclaracaoDominio) comboObjetivoRequerimento.getSelectedItem();
 				// popularOpcoesParecerTecnico(opcaoSelecionada);
 			}
 		};
@@ -503,26 +505,26 @@ public class JanelaPrincipal {
 		return textAtendimento.getText();
 	}
 
-	public void setRequerimento(Requerimento requerimento) {
+	public void setRequerimento(RequerimentoSPUnet requerimento) {
 		this.requerimento = requerimento;
 		aplicarDadosRequerimento(requerimento);
 	}
 
-	private void aplicarDadosRequerimento(Requerimento requerimento) {
-		comboObjetivoRequerimento.setSelectedItem(OpcaoObjetivoRequerimentoEnum.INDEFINIDO);
+	private void aplicarDadosRequerimento(RequerimentoSPUnet requerimento) {
+		comboObjetivoRequerimento.setSelectedItem(OpcaoObjetivoDeclaracaoDominio.INDEFINIDO);
 		textObjetivoOutro.setText(null);
 		textNupSei.setText(null);
 		textObjetivoOutro.setText(null);
 		textObjetivoOutro.setEnabled(false);
 
 		if (this.requerimento != null) {
-			Optional<OpcaoObjetivoRequerimentoEnum> opcaoEnum = EnumSet.allOf(OpcaoObjetivoRequerimentoEnum.class)
+			Optional<OpcaoObjetivoDeclaracaoDominio> opcaoEnum = EnumSet.allOf(OpcaoObjetivoDeclaracaoDominio.class)
 					.stream().filter(e -> e.getId().equals(requerimento.getObjetivoRequerimento().getId())).findFirst();
-			OpcaoObjetivoRequerimentoEnum objetivoDoRequerimento = opcaoEnum.get();
+			OpcaoObjetivoDeclaracaoDominio objetivoDoRequerimento = opcaoEnum.get();
 			popularOpcoesParecerTecnico(objetivoDoRequerimento);
 			if (opcaoEnum.isPresent()) {
 				comboObjetivoRequerimento.setSelectedItem(objetivoDoRequerimento);
-				if (opcaoEnum.equals(OpcaoObjetivoRequerimentoEnum.OUTRO)) {
+				if (opcaoEnum.equals(OpcaoObjetivoDeclaracaoDominio.OUTRO)) {
 					textObjetivoOutro.setEnabled(true);
 				}
 			}
@@ -535,14 +537,26 @@ public class JanelaPrincipal {
 		}
 	}
 
-	private void popularOpcoesParecerTecnico(OpcaoObjetivoRequerimentoEnum opcaoEnum) {
-		DefaultComboBoxModel<OpcaoConclusaoParecerTecnicoDeclaracaoDominioEnum> model = new DefaultComboBoxModel<OpcaoConclusaoParecerTecnicoDeclaracaoDominioEnum>(
-				OpcaoConclusaoParecerTecnicoDeclaracaoDominioEnum.values());
+	private void popularOpcoesParecerTecnico(OpcaoObjetivoDeclaracaoDominio opcaoEnum) {
+		DefaultComboBoxModel<OpcaoParecerTecnicoDeclaracaoDominio> model = new DefaultComboBoxModel<OpcaoParecerTecnicoDeclaracaoDominio>(
+				OpcaoParecerTecnicoDeclaracaoDominio.values());
 		comboParecerTecnico.setModel(model);
 	}
 
-	public JComboBox<OpcaoConclusaoParecerTecnicoDeclaracaoDominioEnum> getComboParecerTecnico() {
+	public JComboBox<OpcaoParecerTecnicoDeclaracaoDominio> getComboParecerTecnico() {
 		return comboParecerTecnico;
+	}
+
+	public JComboBox<OpcaoObjetivoDeclaracaoDominio> getComboObjetivoRequerimento() {
+		return comboObjetivoRequerimento;
+	}
+
+	public void setComboObjetivoRequerimento(JComboBox<OpcaoObjetivoDeclaracaoDominio> comboObjetivoRequerimento) {
+		this.comboObjetivoRequerimento = comboObjetivoRequerimento;
+	}
+
+	public void setComboParecerTecnico(JComboBox<OpcaoParecerTecnicoDeclaracaoDominio> comboParecerTecnico) {
+		this.comboParecerTecnico = comboParecerTecnico;
 	}
 
 }
