@@ -291,6 +291,7 @@ public class EscribaApp {
 				} catch (TimeoutException te) {
 					log("O SEI parece não estar funcionando. Verifique sua conexão de rede e/ou aguarde o retorno do sistema.");
 				} catch (Exception e) {
+					e.printStackTrace();
 					log(e.getMessage());
 				} finally {
 					operador.encerrarDriver();

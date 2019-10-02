@@ -10,7 +10,9 @@ import java.util.logging.Level;
 
 import org.json.JSONObject;
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -24,10 +26,14 @@ import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import br.gov.spusc.escriba.exception.ElementoNaoClicavelException;
+import br.gov.spusc.escriba.exception.ElementoNaoEncontradoException;
+
 public class OperadorSistema {
 	
 	protected WebDriver driver;
 	protected String janelaPrincipalDoNavegador;
+	protected WebElement ultimoElementoClicado;
 	
 	void inicializarDriver() {
 		System.setProperty("webdriver.chrome.driver", "chromedriver77.exe");		
@@ -91,11 +97,15 @@ public class OperadorSistema {
 		return wait.until(new Function<WebDriver, WebElement>() {
 			@Override
 			public WebElement apply(WebDriver t) {
-				WebElement element = t.findElement(by);
-				if (element == null) {
-					System.out.println("Elemento não encontrado: " + by.toString());
-				}
-				return element;
+				try {
+					WebElement element = t.findElement(by);
+					if (element == null) {
+						System.out.println("Elemento não encontrado: " + by.toString());
+					}					
+					return element;
+				} catch (NoSuchElementException e) {
+					return null;
+				}				
 			}
 		});
 	}
@@ -117,5 +127,32 @@ public class OperadorSistema {
 		Wait<WebDriver> wait = new FluentWait<WebDriver>(driver).withTimeout(Duration.ofSeconds(segundos))
 				.pollingEvery(Duration.ofSeconds(intervaloTentativas)).ignoring(NoSuchElementException.class);
 		return wait;
+	}
+	
+	protected void clicar(WebElement elementoAClicar) throws ElementoNaoClicavelException {
+		try {
+			elementoAClicar.click();
+			this.ultimoElementoClicado = elementoAClicar;
+		} catch(ElementNotInteractableException e) {
+			throw new ElementoNaoClicavelException(elementoAClicar);
+		}
+	}
+	protected void clicar(By xpath) throws ElementoNaoClicavelException {
+		clicar(xpath, 30, 1);
+	}
+	
+	protected void clicar(By xpath, int timeout, int intervalo) throws ElementoNaoClicavelException {
+		try {
+			WebElement element = obterElementoClicavel(xpath, timeout, intervalo);			
+			clicar(element);
+		} catch (TimeoutException e) {
+			throw new ElementoNaoEncontradoException(xpath.toString());
+		}
+	}
+
+	protected WebElement obterElementoClicavel(By xpath, int timeout, int intervalo) {
+		Wait<WebDriver> wait = gerarWait(timeout, intervalo);			
+		WebElement element = wait.until(ExpectedConditions.elementToBeClickable(xpath));
+		return element;
 	}
 }

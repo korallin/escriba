@@ -69,7 +69,7 @@ public class JanelaPrincipal {
 	}
 
 	private void initialize() {
-		frame = new JFrame();
+		frame = new JFrame("Escriba - Declaração de Domínio de Imóvel da União");
 		frame.getContentPane().setBackground(Color.WHITE);
 		frame.setBackground(Color.WHITE);
 		BorderLayout borderLayout = (BorderLayout) frame.getContentPane().getLayout();
