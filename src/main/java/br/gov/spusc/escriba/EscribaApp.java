@@ -44,7 +44,7 @@ public class EscribaApp {
 	private RequerimentoSPUnet requerimento;
 
 	private Properties config;
-	private boolean mockSPUnet = true;
+	private boolean mockSPUnet = false;
 
 	/**
 	 * Launch the application.
@@ -255,27 +255,29 @@ public class EscribaApp {
 					
 					operador.acessarProcesso(requerimento.getProcedimentoFormatado());
 					
-					Map<String, List<String>> mapaDeMarcacoes = obterMapaSubstituicoes();
 					
+					//inserir parecer....
+					Map<String, List<String>> mapaDeMarcacoes = obterMapaSubstituicoes();
 					SolicitacaoDocumentoSEI parecerACriar = new SolicitacaoDocumentoSEI(
 							requerimento.getProcedimentoFormatado(), 
 							"Parecer", 
 							NUMERO_DOCUMENTO_MODELO_PARECER, 
 							mapaDeMarcacoes);
-					// SolicitacaoDocumentoSEI parecerGerado = operador.inserirDocumento(parecerACriar);
-					// log("Documento gerado: " + parecerGerado.getIdentificacaoDocumentoGerado() + "(" + parecerGerado.getNumeroDocumentoGerado() + ")");
+					SolicitacaoDocumentoSEI parecerGerado = operador.inserirDocumento(parecerACriar);
+					log("Documento gerado: " + parecerGerado.getIdentificacaoDocumentoGerado() + "(" + parecerGerado.getNumeroDocumentoGerado() + ")");
 					
 					OpcaoConteudoDeclaracaoDeDominio declaracaoSelecionada = OpcaoConteudoDeclaracaoDeDominio.obter(
 							(OpcaoObjetivoDeclaracaoDominio) janelaPrincipal.getComboObjetivoRequerimento().getSelectedItem(),
 							((OpcaoParecerTecnicoDeclaracaoDominio) janelaPrincipal.getComboParecerTecnico().getSelectedItem()).getComInteresse()
 							);
 					
+					
 					// a ordem das chaves deste mapa será importante, por isso LinkedHashMap
 					LinkedHashMap<String, List<String>> mapaOrdenado = new LinkedHashMap<String, List<String>>();
 					mapaOrdenado.put("Declaracao.Conteudo", declaracaoSelecionada.getConclusao());
 					
 					List<String> valorIdentificacaoDocumento = new ArrayList<String>();
-					// valorIdentificacaoDocumento.add(parecerGerado.getIdentificacaoDocumentoGerado());
+					valorIdentificacaoDocumento.add(parecerGerado.getIdentificacaoDocumentoGerado());
 					mapaOrdenado.put("Parecer.IdentificacaoDocumento", valorIdentificacaoDocumento);
 					
 					mapaOrdenado.putAll(mapaDeMarcacoes);

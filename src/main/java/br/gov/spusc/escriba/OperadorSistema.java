@@ -137,8 +137,8 @@ public class OperadorSistema {
 			throw new ElementoNaoClicavelException(elementoAClicar);
 		}
 	}
-	protected void clicar(By xpath) throws ElementoNaoClicavelException {
-		clicar(xpath, 30, 1);
+	protected void clicar(By by) throws ElementoNaoClicavelException {
+		clicar(by, 30, 1);
 	}
 	
 	protected void clicar(By xpath, int timeout, int intervalo) throws ElementoNaoClicavelException {
@@ -150,9 +150,9 @@ public class OperadorSistema {
 		}
 	}
 
-	protected WebElement obterElementoClicavel(By xpath, int timeout, int intervalo) {
+	protected WebElement obterElementoClicavel(By by, int timeout, int intervalo) {
 		Wait<WebDriver> wait = gerarWait(timeout, intervalo);			
-		WebElement element = wait.until(ExpectedConditions.elementToBeClickable(xpath));
+		WebElement element = wait.until(ExpectedConditions.elementToBeClickable(by));
 		return element;
 	}
 }
