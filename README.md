@@ -1,7 +1,7 @@
-# escriba
+# Escriba - Declaração de Domínio
 Robô que preenche parecer técnico e declaração de domínio a partir da análise humana e da leitura automática de requerimento do SPUnet
 
-# Configuração do Projeto (para desenvolvedores)
+## Configuração do Projeto (para desenvolvedores)
 Na linha de comando:
 > cd /caminho/para/sua/pasta/de/projetos 
 
