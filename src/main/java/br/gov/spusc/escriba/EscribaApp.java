@@ -100,19 +100,19 @@ public class EscribaApp {
 
 		if (config.containsKey(CONFIG_CREDENCIAL_SPUNET_LOGIN)) {
 			credencialAcessoSPUnet.setLogin(config.getProperty((String) CONFIG_CREDENCIAL_SPUNET_LOGIN));
-			janelaPrincipal.getTextCredencialSPUnetLogin().setText(getCredencialAcessoSPUnet().getLogin());
+			// janelaPrincipal.getTextCredencialSPUnetLogin().setText(getCredencialAcessoSPUnet().getLogin());
 		}
 		if (config.containsKey(CONFIG_CREDENCIAL_SPUNET_SENHA)) {
 			credencialAcessoSPUnet.setSenha(config.getProperty((String) CONFIG_CREDENCIAL_SPUNET_SENHA));
-			janelaPrincipal.getTextCredencialSPUnetSenha().setText(getCredencialAcessoSPUnet().getSenha());
+			// janelaPrincipal.getTextCredencialSPUnetSenha().setText(getCredencialAcessoSPUnet().getSenha());
 		}
 		if (config.containsKey(CONFIG_CREDENCIAL_SEI_LOGIN)) {
 			credencialAcessoSEI.setLogin(config.getProperty((String) CONFIG_CREDENCIAL_SEI_LOGIN));
-			janelaPrincipal.getTextCredencialSEILogin().setText(getCredencialAcessoSEI().getLogin());
+			// janelaPrincipal.getTextCredencialSEILogin().setText(getCredencialAcessoSEI().getLogin());
 		}
 		if (config.containsKey(CONFIG_CREDENCIAL_SEI_SENHA)) {
 			credencialAcessoSEI.setSenha(config.getProperty((String) CONFIG_CREDENCIAL_SEI_SENHA));
-			janelaPrincipal.getTextCredencialSEISenha().setText(getCredencialAcessoSEI().getSenha());
+			// janelaPrincipal.getTextCredencialSEISenha().setText(getCredencialAcessoSEI().getSenha());
 		}
 
 	}
