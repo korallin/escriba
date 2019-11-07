@@ -1,6 +1,8 @@
 package br.gov.spusc.escriba.pojo;
 
-public class ObjetivoRequerimento {
+import br.gov.spusc.escriba.MarcacaoDeTexto;
+
+public class ObjetivoRequerimento extends MarcacaoDeTexto {
 	
 	private Integer id;
 	

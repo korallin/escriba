@@ -97,7 +97,10 @@ public enum OpcaoConteudoDeclaracaoDeDominio {
 			true,
 			"Transferência de Titularidade - Com interesse",
 			new ArrayList<String>() {{
-				add("");
+				add("Conforme análise técnica constante do Parecer {{Parecer.IdentificacaoDocumento}}, DECLARAMOS para fins de Transferência de Titularidade,  que o imóvel acima descrito se sobrepõe a bens de propriedade da União, caracterizados como Terreno de Marinha e Acrescidos ou Próprios Nacionais administrados pela Superintendência do Patrimônio da União em Santa Catarina - SPU/SC."); 
+				add("Diante do exposto, o procedimento de Transferência de Titularidade deverá obedecer o disposto no § 2º do Art. 3º do Decreto-Lei nº 2.398, de 21 de dezembro de 1987, sendo necessária a apresentação de Certidão de Autorização para Transferência - CAT, nos termos da Instrução Normativa nº 01, de 09 de março de 2018."); 
+				add("A utilização de bem imóvel de propriedade da União, sem a prévia autorização, configura infração administrativa contra do Patrimônio da União, passível de multa e indenização, nos termos do Art. 6º do Decreto-Lei nº 2.398, de 21 de dezembro de 1987."); 
+				add("A presente declaração foi elaborada com base na documentação apresentada pelo interessado no Processo SEI {{RequerimentoSPUnet.ProcedimentoFormatado}}, sob as penas da lei, sendo que a integralidade do referido processo administrativo pode ser consultada no endereço eletrônico http://www.fazenda.gov.br/sei, na opção Consulta de Processos.");
 			}}),
 	
 	INSTRUCAO_INQUERIO_SEM_INTERESSE(
@@ -105,7 +108,9 @@ public enum OpcaoConteudoDeclaracaoDeDominio {
 			false,
 			"Instrução de Inquérito - Sem interesse",
 			new ArrayList<String>() {{
-				add("");
+				add("Conforme análise técnica constante do Parecer {{Parecer.IdentificacaoDocumento}}, DECLARAMOS para fins de Instrução de Inquérito/Processo,  que o imóvel acima descrito não se sobrepõe a bens de propriedade da União, caracterizados como Terreno de Marinha e Acrescidos ou Próprios Nacionais administrados pela Superintendência do Patrimônio da União em Santa Catarina - SPU/SC."); 
+				add("Diante do exposto, não existe interesse da Superintendência do Patrimônio da União em Santa Catarina - SPU/SC no procedimento de Instrução de Inquérito/Processo."); 
+				add("A presente declaração foi elaborada com base na documentação apresentada pelo interessado no Processo SEI {{RequerimentoSPUnet.ProcedimentoFormatado}}, sob as penas da lei, sendo que a integralidade do referido processo administrativo pode ser consultada no endereço eletrônico http://www.fazenda.gov.br/sei, na opção Consulta de Processos.");
 			}}),
 	
 	INSTRUCAO_INQUERIO_COM_INTERESSE(
@@ -113,7 +118,10 @@ public enum OpcaoConteudoDeclaracaoDeDominio {
 			true,
 			"Instrução de Inquérito - Com interesse",
 			new ArrayList<String>() {{
-				add("");
+				add("Conforme análise técnica constante do Parecer {{Parecer.IdentificacaoDocumento}}, DECLARAMOS para fins de Instrução de Inquérito/Processo, que o imóvel acima descrito se sobrepõe a bens de propriedade da União, caracterizados como Terreno de Marinha e Acrescidos ou Próprios Nacionais administrados pela Superintendência do Patrimônio da União em Santa Catarina - SPU/SC."); 
+				add("Diante do exposto, existe interesse da Superintendência do Patrimônio da União em Santa Catarina - SPU/SC no procedimento de Instrução de Inquérito/Processo."); 
+				add("A utilização de bem imóvel de propriedade da União, sem a prévia autorização, configura infração administrativa contra do Patrimônio da União, passível de multa e indenização, nos termos do Art. 6º do Decreto-Lei nº 2.398, de 21 de dezembro de 1987."); 
+				add("A presente declaração foi elaborada com base na documentação apresentada pelo interessado no Processo SEI {{RequerimentoSPUnet.ProcedimentoFormatado}}, sob as penas da lei, sendo que a integralidade do referido processo administrativo pode ser consultada no endereço eletrônico http://www.fazenda.gov.br/sei, na opção Consulta de Processos.");
 			}}),
 	
 	JUDICIAL_AUDITORIA_SEM_INTERESSE(
@@ -121,7 +129,9 @@ public enum OpcaoConteudoDeclaracaoDeDominio {
 			false,
 			"Judicial/Auditoria - Sem interesse",
 			new ArrayList<String>() {{
-				add("");
+				add("Conforme análise técnica constante do Parecer {{Parecer.IdentificacaoDocumento}}, DECLARAMOS para fins de Usucapião Judicial,  que o imóvel acima descrito não se sobrepõe a bens de propriedade da União, caracterizados como Terreno de Marinha e Acrescidos ou Próprios Nacionais administrados pela Superintendência do Patrimônio da União em Santa Catarina - SPU/SC."); 
+				add("A presente declaração não dispensa a citação da Advocacia Geral da União quando do ajuizamento de ação de usucapião, conforme determina o § 3º do Art. 242 da Lei nº 13.105, de 16 de março de 2015 - Código de Processo Civil."); 
+				add("A presente declaração foi elaborada com base na documentação apresentada pelo interessado no Processo SEI {{RequerimentoSPUnet.ProcedimentoFormatado}}, sob as penas da lei, sendo que a integralidade do referido processo administrativo pode ser consultada no endereço eletrônico http://www.fazenda.gov.br/sei, na opção Consulta de Processos.");
 			}}),
 	
 	JUDICIAL_AUDITORIA_COM_INTERESSE(
@@ -129,7 +139,11 @@ public enum OpcaoConteudoDeclaracaoDeDominio {
 			true,
 			"Judicial/Auditoria - Com interesse",
 			new ArrayList<String>() {{
-				add("");
+				add("Conforme análise técnica constante do Parecer {{Parecer.IdentificacaoDocumento}}, DECLARAMOS para fins de Usucapião Judicial, que o imóvel acima descrito se sobrepõe a bens de propriedade da União, caracterizados como Terreno de Marinha e Acrescidos ou Próprios Nacionais administrados pela Superintendência do Patrimônio da União em Santa Catarina - SPU/SC."); 
+				add("Diante do exposto, existe interesse da Superintendência do Patrimônio da União em Santa Catarina - SPU/SC no referido procedimento de Usucapião Judicial."); 
+				add("A presente declaração não dispensa a citação da Advocacia Geral da União quando do ajuizamento de ação de usucapião, conforme determina o § 3º do Art. 242 da Lei nº 13.105, de 16 de março de 2015 - Código de Processo Civil."); 
+				add("A utilização de bem imóvel de propriedade da União, sem a prévia autorização, configura infração administrativa contra do Patrimônio da União, passível de multa e indenização, nos termos do Art. 6º do Decreto-Lei nº 2.398, de 21 de Dezembro de 1987."); 
+				add("A presente declaração foi elaborada com base na documentação apresentada pelo interessado no Processo SEI {{RequerimentoSPUnet.ProcedimentoFormatado}}, sob as penas da lei, sendo que a integralidade do referido processo administrativo pode ser consultada no endereço eletrônico http://www.fazenda.gov.br/sei, na opção Consulta de Processos.");
 			}}),
 	
 	REGISTRO_CARTORIAL_SEM_INTERESSE(
@@ -137,7 +151,11 @@ public enum OpcaoConteudoDeclaracaoDeDominio {
 			false,
 			"Registro Cartorial - Sem interesse",
 			new ArrayList<String>() {{
-				add("");
+				add("Conforme análise técnica constante do Parecer {{Parecer.IdentificacaoDocumento}}, DECLARAMOS para fins de Registro Cartorial, que o imóvel acima descrito não se sobrepõe a bens de propriedade da União, caracterizados como Terreno de Marinha e Acrescidos ou Próprios Nacionais administrados pela Superintendência do Patrimônio da União em Santa Catarina - SPU/SC."); 
+				add("Diante do exposto, não existe interesse da Superintendência do Patrimônio da União em Santa Catarina - SPU/SC no procedimento de Registro Cartorial."); 
+				add("O procedimento de Registro Cartorial deverá obedecer o disposto no § 2º do Art. 3º do Decreto-Lei nº 2.398, de 21 de dezembro de 1987.");
+				add("A presente declaração não dispensa a observância do disposto no § 3º do Art. 216-A da Lei nº 6.015, de 31 de dezembro de 1973, pelo Oficial Registrador."); 
+				add("A presente declaração foi elaborada com base na documentação apresentada pelo interessado no Processo SEI {{RequerimentoSPUnet.ProcedimentoFormatado}}, sob as penas da lei, sendo que a integralidade do referido processo administrativo pode ser consultada no endereço eletrônico http://www.fazenda.gov.br/sei, na opção Consulta de Processos.");
 			}}),
 	
 	REGISTRO_CARTORIAL_COM_INTERESSE(
@@ -145,7 +163,12 @@ public enum OpcaoConteudoDeclaracaoDeDominio {
 			true,
 			"Registro Cartorial - Com interesse",
 			new ArrayList<String>() {{
-				add("");
+				add("Conforme análise técnica constante do Parecer {{Parecer.IdentificacaoDocumento}}, DECLARAMOS para fins de Registro Cartorial, que o imóvel acima descrito se sobrepõe a bens de propriedade da União, caracterizados como Terreno de Marinha e Acrescidos ou Próprios Nacionais administrados pela Superintendência do Patrimônio da União em Santa Catarina - SPU/SC."); 
+				add("Diante do exposto, existe interesse da Superintendência do Patrimônio da União em Santa Catarina - SPU/SC na impugnação do procedimento de Registro Cartorial."); 
+				add("O procedimento de Registro Cartorial deverá obedecer o disposto no § 2º do Art. 3º do Decreto-Lei nº 2.398, de 21 de dezembro de 1987."); 
+				add("A presente declaração não dispensa a observância do disposto no § 3º do Art. 216-A da Lei nº 6.015, de 31 de dezembro de 1973, pelo Oficial Registrador."); 
+				add("A utilização de bem imóvel de propriedade da União, sem a prévia autorização, configura infração administrativa contra do Patrimônio da União, passível de multa e indenização, nos termos do Art. 6º do Decreto-Lei nº 2.398, de 21 de dezembro de 1987."); 
+				add("A presente declaração foi elaborada com base na documentação apresentada pelo interessado no Processo SEI {{RequerimentoSPUnet.ProcedimentoFormatado}}, sob as penas da lei, sendo que a integralidade do referido processo administrativo pode ser consultada no endereço eletrônico http://www.fazenda.gov.br/sei, na opção Consulta de Processos.");
 			}}),
 	
 	OUTRO_SEM_INTERESSE(
@@ -153,7 +176,11 @@ public enum OpcaoConteudoDeclaracaoDeDominio {
 			false,
 			"Outro - Sem interesse",
 			new ArrayList<String>() {{
-				add("");
+				add("Conforme análise técnica constante do Parecer {{Parecer.IdentificacaoDocumento}}, DECLARAMOS para fins de {{RequerimentoSPUnet.ObjetivoRequerimento.Descricao}}, que o imóvel acima descrito não se sobrepõe a bens de propriedade da União, caracterizados como Terreno de Marinha e Acrescidos ou Próprios Nacionais administrados pela Superintendência do Patrimônio da União em Santa Catarina - SPU/SC."); 
+				add("Todo e qualquer procedimento de Registro Cartorial deverá obedecer o disposto no § 2º do Art. 3º do Decreto-Lei nº 2.398, de 21 de dezembro de 1987."); 
+				add("A presente declaração não dispensa a observância do disposto no § 3º do Art. 216-A da Lei nº 6.015, de 31 de dezembro de 1973 pelo Oficial Registrador em procedimentos de Usucapião Extrajudicial, ou qualquer outro procedimento de registro cartorial."); 
+				add("A presente declaração não dispensa a citação da Advocacia Geral da União quando do ajuizamento de ação de usucapião, conforme determina o § 3º do Art. 242 da Lei nº 13.105, de 16 de março de 2015 - Código de Processo Civil."); 
+				add("A presente declaração foi elaborada com base na documentação apresentada pelo interessado no Processo SEI {{RequerimentoSPUnet.ProcedimentoFormatado}}, sob as penas da lei, sendo que a integralidade do referido processo administrativo pode ser consultada no endereço eletrônico http://www.fazenda.gov.br/sei, na opção Consulta de Processos.");
 			}}),
 	
 	OUTRO_COM_INTERESSE(
@@ -161,7 +188,12 @@ public enum OpcaoConteudoDeclaracaoDeDominio {
 			true,
 			"Outro - Com interesse",
 			new ArrayList<String>() {{
-				add("");
+				add("Conforme análise técnica constante do Parecer {{Parecer.IdentificacaoDocumento}}, DECLARAMOS para fins de {{RequerimentoSPUnet.ObjetivoRequerimento.Descricao}}, que o imóvel acima descrito se sobrepõe a bens de propriedade da União, caracterizados como Terreno de Marinha e Acrescidos ou Próprios Nacionais administrados pela Superintendência do Patrimônio da União em Santa Catarina - SPU/SC."); 
+				add("Diante do exposto, existe interesse da Superintendência do Patrimônio da União em Santa Catarina - SPU/SC no imóvel questão.");
+				add("Todo e qualquer procedimento de Registro Cartorial deverá obedecer o disposto no § 2º do Art. 3º do Decreto-Lei nº 2.398, de 21 de dezembro de 1987."); 
+				add("A utilização de bem imóvel de propriedade da União, sem a prévia autorização, configura infração administrativa contra do Patrimônio da União, passível de multa e indenização, nos termos do Art. 6º do Decreto-Lei nº 2.398, de 21 de dezembro de 1987."); 
+				add("A presente declaração não dispensa a citação da Advocacia Geral da União quando do ajuizamento de ação de usucapião, conforme determina o § 3º do Art. 242 da Lei nº 13.105, de 16 de março de 2015 - Código de Processo Civil."); 
+				add("A presente declaração foi elaborada com base na documentação apresentada pelo interessado no Processo SEI {{RequerimentoSPUnet.ProcedimentoFormatado}}, sob as penas da lei, sendo que a integralidade do referido processo administrativo pode ser consultada no endereço eletrônico http://www.fazenda.gov.br/sei, na opção Consulta de Processos.");
 			}});
 	
 	private OpcaoObjetivoDeclaracaoDominio objetivoRequerimentoEnum;
@@ -172,11 +204,19 @@ public enum OpcaoConteudoDeclaracaoDeDominio {
 
 	private List<String> conclusao;
 	
-	public static OpcaoConteudoDeclaracaoDeDominio obter(OpcaoObjetivoDeclaracaoDominio objetivo, Boolean comInteresse) {
-		Stream<OpcaoConteudoDeclaracaoDeDominio> opcoes = EnumSet.allOf(OpcaoConteudoDeclaracaoDeDominio.class)
-				.stream().filter(e -> e.getObjetivoRequerimentoEnum().getId().equals(objetivo.getId())).distinct();
+	public static OpcaoConteudoDeclaracaoDeDominio obter(OpcaoObjetivoDeclaracaoDominio objetivo, OpcaoParecerTecnicoDeclaracaoDominio opcaoParecerTecnicoDeclaracaoDominio) {
 		
-		Optional<OpcaoConteudoDeclaracaoDeDominio> opcaoEnum = opcoes.filter(e -> e.mesmoInteresse(comInteresse)).findFirst();
+		Stream<OpcaoConteudoDeclaracaoDeDominio> opcoes = EnumSet.allOf(OpcaoConteudoDeclaracaoDeDominio.class)
+				.stream().filter(
+						e -> {
+							if(e != null) {
+								return e.getObjetivoRequerimentoEnum().getId().equals(objetivo.getId());															
+							} else {
+								return false;
+							}
+						}).distinct();
+		
+		Optional<OpcaoConteudoDeclaracaoDeDominio> opcaoEnum = opcoes.filter(e -> e.mesmoInteresse(opcaoParecerTecnicoDeclaracaoDominio.getComInteresse())).findFirst();
 		if(opcaoEnum.isPresent())
 			return opcaoEnum.get();
 		return null;
@@ -195,12 +235,10 @@ public enum OpcaoConteudoDeclaracaoDeDominio {
 	}
 	
 	private boolean mesmoInteresse(Boolean interesse) {
-		if(this.comInteresse == null) {
-			if(interesse == null)
-				return true;
-			return false;
+		if(this.comInteresse == null && interesse == null) {
+			return true;
 		}
-		if(interesse == null) {
+		if(this.comInteresse == null || interesse == null) {
 			return false;
 		}
 		return this.comInteresse.booleanValue() == interesse.booleanValue();		

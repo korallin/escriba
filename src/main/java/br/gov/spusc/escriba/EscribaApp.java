@@ -7,7 +7,9 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormatSymbols;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +46,7 @@ public class EscribaApp {
 	private RequerimentoSPUnet requerimento;
 
 	private Properties config;
-	private boolean mockSPUnet = false;
+	private boolean mockSPUnet = true;
 
 	/**
 	 * Launch the application.
@@ -186,7 +188,9 @@ public class EscribaApp {
 			requerimento.setProcedimentoFormatado("10154.125690/2019-27");
 			
 			requerimento.setObjetivoRequerimento(new ObjetivoRequerimento());
-			requerimento.getObjetivoRequerimento().setId(OpcaoObjetivoDeclaracaoDominio.USUCAPIAO_EXTRAJUDICIAL.getId());
+			requerimento.getObjetivoRequerimento().setId(OpcaoObjetivoDeclaracaoDominio.OUTRO.getId());
+			requerimento.getObjetivoRequerimento().setObjetivo(OpcaoObjetivoDeclaracaoDominio.OUTRO.getObjetivo());
+			requerimento.getObjetivoRequerimento().setDescricao("Outro objetivo não listado");
 			
 			requerimento.setRequerente(new Requerente());
 			requerimento.getRequerente().setNome("JOÃO JOSÉ DA SILVA E SOUZA");
@@ -200,7 +204,7 @@ public class EscribaApp {
 			requerimento.getImovel().setComplemento("CASA");
 			requerimento.getImovel().setMunicipio("SANTA ILUSAO");
 			requerimento.getImovel().setBairro("FELICIDADE");
-			requerimento.getImovel().setUf("SC");
+			requerimento.getImovel().setUf("SC");			
 			
 			janelaPrincipal.setRequerimento(requerimento);
 		} else {
@@ -244,52 +248,19 @@ public class EscribaApp {
 				log("Iniciando a instrução do processo SEI...");
 				OperadorSEI operador = new OperadorSEI();
 				try {
-					
-					log("Inicializando driver... ");
+					log("Inicializando driver...");
 					operador.inicializarDriver();
 					
-					log("Iniciando autenticação no sistema... ");
+					log("Iniciando autenticação no sistema...");
 					operador.fazerLogin(janelaPrincipal.obterCredencialSEI());
 					
 					operador.fecharPopup();
 					
 					operador.acessarProcesso(requerimento.getProcedimentoFormatado());
 					
-					
-					//inserir parecer....
 					Map<String, List<String>> mapaDeMarcacoes = obterMapaSubstituicoes();
-					SolicitacaoDocumentoSEI parecerACriar = new SolicitacaoDocumentoSEI(
-							requerimento.getProcedimentoFormatado(), 
-							"Parecer", 
-							NUMERO_DOCUMENTO_MODELO_PARECER, 
-							mapaDeMarcacoes);
-					SolicitacaoDocumentoSEI parecerGerado = operador.inserirDocumento(parecerACriar);
-					log("Documento gerado: " + parecerGerado.getIdentificacaoDocumentoGerado() + "(" + parecerGerado.getNumeroDocumentoGerado() + ")");
-					
-					OpcaoConteudoDeclaracaoDeDominio declaracaoSelecionada = OpcaoConteudoDeclaracaoDeDominio.obter(
-							(OpcaoObjetivoDeclaracaoDominio) janelaPrincipal.getComboObjetivoRequerimento().getSelectedItem(),
-							((OpcaoParecerTecnicoDeclaracaoDominio) janelaPrincipal.getComboParecerTecnico().getSelectedItem()).getComInteresse()
-							);
-					
-					
-					// a ordem das chaves deste mapa será importante, por isso LinkedHashMap
-					LinkedHashMap<String, List<String>> mapaOrdenado = new LinkedHashMap<String, List<String>>();
-					mapaOrdenado.put("Declaracao.Conteudo", declaracaoSelecionada.getConclusao());
-					
-					List<String> valorIdentificacaoDocumento = new ArrayList<String>();
-					valorIdentificacaoDocumento.add(parecerGerado.getIdentificacaoDocumentoGerado());
-					mapaOrdenado.put("Parecer.IdentificacaoDocumento", valorIdentificacaoDocumento);
-					
-					mapaOrdenado.putAll(mapaDeMarcacoes);
-					SolicitacaoDocumentoSEI declaracaoACriar = new SolicitacaoDocumentoSEI(
-							requerimento.getProcedimentoFormatado(),
-							"Declaração", 
-							NUMERO_DOCUMENTO_MODELO_DECLARACAO, 
-							mapaOrdenado);
-					SolicitacaoDocumentoSEI declaracaoGerada = operador.inserirDocumento(declaracaoACriar);
-					log("Documento gerado: " + declaracaoGerada.getIdentificacaoDocumentoGerado() + "(" + declaracaoGerada.getNumeroDocumentoGerado() + ")");
-					
-					
+					SolicitacaoDocumentoSEI parecerGerado = inserirParecer(operador, mapaDeMarcacoes);
+					inserirDeclaracao(operador, mapaDeMarcacoes, parecerGerado);
 				} catch (TimeoutException te) {
 					log("O SEI parece não estar funcionando. Verifique sua conexão de rede e/ou aguarde o retorno do sistema.");
 				} catch (Exception e) {
@@ -301,19 +272,77 @@ public class EscribaApp {
 				
 			}
 
+			private SolicitacaoDocumentoSEI inserirDeclaracao(OperadorSEI operador, Map<String, List<String>> mapaDeMarcacoes,
+					SolicitacaoDocumentoSEI parecerGerado) throws Exception {
+				
+				
+				OpcaoParecerTecnicoDeclaracaoDominio parecerSelecionado = (OpcaoParecerTecnicoDeclaracaoDominio) janelaPrincipal.getComboParecerTecnico().getSelectedItem();
+				if(parecerSelecionado.equals(OpcaoParecerTecnicoDeclaracaoDominio.DOCUMENTACAO_INSUFICIENTE)
+						|| parecerSelecionado.equals(OpcaoParecerTecnicoDeclaracaoDominio.MANIFESTACAO_DNIT)) {
+					return null;
+				}
+				
+				OpcaoConteudoDeclaracaoDeDominio declaracaoSelecionada = OpcaoConteudoDeclaracaoDeDominio.obter(
+						(OpcaoObjetivoDeclaracaoDominio) janelaPrincipal.getComboObjetivoRequerimento().getSelectedItem(),
+						(OpcaoParecerTecnicoDeclaracaoDominio) janelaPrincipal.getComboParecerTecnico().getSelectedItem());
+				
+				// a ordem das chaves deste mapa será importante, por isso LinkedHashMap
+				LinkedHashMap<String, List<String>> mapaOrdenado = new LinkedHashMap<String, List<String>>();
+				mapaOrdenado.put("Declaracao.Conteudo", declaracaoSelecionada.getConclusao());
+				
+				List<String> valorIdentificacaoDocumento = new ArrayList<String>();
+				valorIdentificacaoDocumento.add(parecerGerado.getIdentificacaoDocumentoGerado());
+				mapaOrdenado.put("Parecer.IdentificacaoDocumento", valorIdentificacaoDocumento);
+				
+				mapaOrdenado.putAll(mapaDeMarcacoes);
+				SolicitacaoDocumentoSEI declaracaoACriar = new SolicitacaoDocumentoSEI(
+						requerimento.getProcedimentoFormatado(),
+						"Declaração", 
+						NUMERO_DOCUMENTO_MODELO_DECLARACAO, 
+						mapaOrdenado);
+				SolicitacaoDocumentoSEI declaracaoGerada = operador.inserirDocumento(declaracaoACriar);
+				log("Documento gerado: " + declaracaoGerada.getIdentificacaoDocumentoGerado() + "(" + declaracaoGerada.getNumeroDocumentoGerado() + ")");
+				return declaracaoACriar;
+			}
+
+			private SolicitacaoDocumentoSEI inserirParecer(OperadorSEI operador,
+					Map<String, List<String>> mapaDeMarcacoes) throws Exception {
+				SolicitacaoDocumentoSEI parecerACriar = new SolicitacaoDocumentoSEI(
+						requerimento.getProcedimentoFormatado(), 
+						"Parecer", 
+						NUMERO_DOCUMENTO_MODELO_PARECER, 
+						mapaDeMarcacoes);
+				SolicitacaoDocumentoSEI parecerGerado = operador.inserirDocumento(parecerACriar);
+				log("Documento gerado: " + parecerGerado.getIdentificacaoDocumentoGerado() + "(" + parecerGerado.getNumeroDocumentoGerado() + ")");
+				return parecerGerado;
+			}
+
 		}).start();
 	}
 
 	private Map<String, List<String>> obterMapaSubstituicoes() {
 		OpcaoParecerTecnicoDeclaracaoDominio conclusaoSelecionada = 
 				(OpcaoParecerTecnicoDeclaracaoDominio) janelaPrincipal.getComboParecerTecnico().getSelectedItem();
-		
 		Map<String, List<String>> mapa = requerimento.preencherMapaDeMarcacoesValores();
-		
+		preencherMapaComConclusao(conclusaoSelecionada, mapa);		
+		preencherMapaComCalendario(mapa);		
+		return mapa;
+	}
+
+	private void preencherMapaComConclusao(OpcaoParecerTecnicoDeclaracaoDominio conclusaoSelecionada,
+			Map<String, List<String>> mapa) {
 		List<String> conteudoParecerTecnico = new ArrayList<String>();
 		conteudoParecerTecnico.add(conclusaoSelecionada.getConclusao());
 		mapa.put("Analise.Conclusao", conteudoParecerTecnico);
-		
-		return mapa;
+	}
+
+	private void preencherMapaComCalendario(Map<String, List<String>> mapa) {
+		Calendar hoje = Calendar.getInstance();
+		mapa.put("Calendario.diaMes", new ArrayList<String>() {{
+			add(String.valueOf(hoje.get(Calendar.DAY_OF_MONTH)));
+		}});
+		mapa.put("Calendario.mesExtenso", new ArrayList<String>() {{
+			add(DateFormatSymbols.getInstance().getMonths()[hoje.get(Calendar.MONTH)]);
+		}});
 	}
 }
