@@ -46,7 +46,7 @@ public class EscribaApp {
 	private RequerimentoSPUnet requerimento;
 
 	private Properties config;
-	private boolean mockSPUnet = true;
+	private boolean mockSPUnet = false;
 
 	/**
 	 * Launch the application.

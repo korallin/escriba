@@ -122,28 +122,28 @@ public class OperadorSPUnet extends OperadorSistema {
 		
 		if(!json.isNull("endereco")) {
 			JSONObject jsonEndereco = (JSONObject) json.get("endereco");
-			if(!json.isNull("cep")) {
+			if(!jsonEndereco.isNull("cep")) {
 				imovel.setCep(jsonEndereco.getString("cep"));				
 			}
-			if(!json.isNull("tipoLogradouro")) {
+			if(!jsonEndereco.isNull("tipoLogradouro")) {
 				imovel.setTipoLogradouro(jsonEndereco.getString("tipoLogradouro"));				
 			}
-			if(!json.isNull("logradouro")) {
+			if(!jsonEndereco.isNull("logradouro")) {
 				imovel.setLogradouro(jsonEndereco.getString("logradouro"));				
 			}
-			if(!json.isNull("numero")) {
+			if(!jsonEndereco.isNull("numero")) {
 				imovel.setNumero(jsonEndereco.getString("numero"));				
 			}
-			if(!json.isNull("complemento")) {
+			if(!jsonEndereco.isNull("complemento")) {
 				imovel.setComplemento(jsonEndereco.getString("complemento"));				
 			}
-			if(!json.isNull("municipio")) {
+			if(!jsonEndereco.isNull("municipio")) {
 				imovel.setMunicipio(jsonEndereco.getString("municipio"));				
 			}
-			if(!json.isNull("bairro")) {
+			if(!jsonEndereco.isNull("bairro")) {
 				imovel.setBairro(jsonEndereco.getString("bairro"));				
 			}
-			if(!json.isNull("uf")) {
+			if(!jsonEndereco.isNull("uf")) {
 				imovel.setUf(jsonEndereco.getString("uf"));							
 			}
 		}
