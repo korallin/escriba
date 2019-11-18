@@ -1,10 +1,13 @@
 package br.gov.spusc.escriba.pojo;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 import br.gov.spusc.escriba.MarcacaoDeTexto;
 
 public class Imovel extends MarcacaoDeTexto {
 
-	private String nuMatriculaTransicao, classificacaoImovel, nuProcesso, nuInscricao, tipoImovel;
+	private String nuMatriculaTransicao, classificacaoImovel, nuProcesso, nuInscricao, tipoImovel, areaTerrenoFormatada;
 	
 	private String cep, tipoLogradouro, logradouro, numero, complemento, municipio, bairro, uf;
 	
@@ -120,6 +123,16 @@ public class Imovel extends MarcacaoDeTexto {
 
 	public void setAreaTerreno(double areaTerreno) {
 		this.areaTerreno = areaTerreno;
+		NumberFormat numberFormat = NumberFormat.getNumberInstance(new Locale("pt", "BR"));
+		this.setAreaTerrenoFormatada(numberFormat.format(areaTerreno));			
+	}
+
+	public String getAreaTerrenoFormatada() {
+		return areaTerrenoFormatada;
+	}
+
+	public void setAreaTerrenoFormatada(String areaTerrenoFormatada) {
+		this.areaTerrenoFormatada = areaTerrenoFormatada;
 	}
 	
 

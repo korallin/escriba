@@ -1,6 +1,8 @@
 package br.gov.spusc.escriba;
 
+import java.text.NumberFormat;
 import java.time.Duration;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 
 import org.json.JSONArray;
@@ -117,7 +119,8 @@ public class OperadorSPUnet extends OperadorSistema {
 			imovel.setTipoImovel(json.getString("tipoImovel"));			
 		}
 		if(!json.isNull("areaTerreno")) {
-			imovel.setAreaTerreno(json.getDouble("areaTerreno"));			
+			double areaTerreno = json.getDouble("areaTerreno");			
+			imovel.setAreaTerreno(areaTerreno);
 		}
 		
 		if(!json.isNull("endereco")) {
