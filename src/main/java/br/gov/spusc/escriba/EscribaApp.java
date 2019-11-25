@@ -77,6 +77,8 @@ public class EscribaApp {
 		credencialAcessoSEI.setPropriedadeLogin(CONFIG_CREDENCIAL_SEI_LOGIN);
 		credencialAcessoSEI.setPropriedadeSenha(CONFIG_CREDENCIAL_SEI_SENHA);
 
+		requerimento = new RequerimentoSPUnet();
+		requerimento.setObjetivoRequerimento(new ObjetivoRequerimento());
 		janelaPrincipal = new JanelaPrincipal(this);
 		carregarConfiguracoes();
 	}
@@ -204,9 +206,10 @@ public class EscribaApp {
 			requerimento.getImovel().setComplemento("CASA");
 			requerimento.getImovel().setMunicipio("SANTA ILUSAO");
 			requerimento.getImovel().setBairro("FELICIDADE");
-			requerimento.getImovel().setUf("SC");			
+			requerimento.getImovel().setUf("SC");
+			requerimento.getImovel().setAreaTerreno(123456789);
 			
-			janelaPrincipal.setRequerimento(requerimento);
+			janelaPrincipal.aplicarDadosRequerimento(requerimento);
 		} else {
 			new Thread(new Runnable() {
 				
@@ -228,7 +231,7 @@ public class EscribaApp {
 						requerimento = operador.obterRequerimentoPorNumeroAtendimento(janelaPrincipal.obterNumeroAtendimento());
 						log(requerimento.toString());
 						
-						janelaPrincipal.setRequerimento(requerimento);
+						janelaPrincipal.aplicarDadosRequerimento(requerimento);
 						operador.encerrarDriver();				
 					} catch (TimeoutException te) {
 						log("O SPUnet parece não estar funcionando. Verifique sua conexão de rede e/ou aguarde o retorno do sistema.");
@@ -344,5 +347,13 @@ public class EscribaApp {
 		mapa.put("Calendario.mesExtenso", new ArrayList<String>() {{
 			add(DateFormatSymbols.getInstance().getMonths()[hoje.get(Calendar.MONTH)]);
 		}});
+	}
+
+	public void setRequerimento(RequerimentoSPUnet requerimento) {
+		this.requerimento = requerimento;
+	}
+
+	public RequerimentoSPUnet getRequerimento() {
+		return this.requerimento;
 	}
 }

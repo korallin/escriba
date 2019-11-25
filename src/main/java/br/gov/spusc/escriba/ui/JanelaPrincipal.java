@@ -28,6 +28,9 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
 
 import br.gov.spusc.escriba.CredencialAcesso;
 import br.gov.spusc.escriba.EscribaApp;
@@ -51,7 +54,7 @@ public class JanelaPrincipal {
 	private EscribaApp escriba;
 	private CredencialAcessoDialog credencialAcessoSEIDialog;
 	private CredencialAcessoDialog credencialAcessoSPUnetDialog;
-	private RequerimentoSPUnet requerimento;
+	// private RequerimentoSPUnet requerimento;
 
 	public JanelaPrincipal(EscribaApp escriba) {
 		this.escriba = escriba;
@@ -129,7 +132,6 @@ public class JanelaPrincipal {
 		gbc_textAtendimento.gridx = 1;
 		gbc_textAtendimento.gridy = 0;
 		panel_3.add(textAtendimento, gbc_textAtendimento);
-		textAtendimento.setText("SC03148/2019");
 
 		JButton botaoObterDadosSPUnet = new JButton("Obter Requerimento");
 		GridBagConstraints gbc_botaoObterDadosSPUnet = new GridBagConstraints();
@@ -176,7 +178,41 @@ public class JanelaPrincipal {
 		gbc_comboObjetivoRequerimento.gridy = 2;
 		panel_3.add(comboObjetivoRequerimento, gbc_comboObjetivoRequerimento);
 		popularOpcoesObjetivoRequerimento();
+		
 		textObjetivoOutro = new JTextField();
+		textObjetivoOutro.getDocument().addDocumentListener(new DocumentListener() {
+			
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				atualizarDescricaoDoObjetivoDoRequerimento(e);
+			}
+			
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				atualizarDescricaoDoObjetivoDoRequerimento(e);
+			}
+			
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				atualizarDescricaoDoObjetivoDoRequerimento(e);				
+			}
+
+			private void atualizarDescricaoDoObjetivoDoRequerimento(DocumentEvent documentEvent) {
+				String novoValor = ""; 
+				try {
+					if(documentEvent.getDocument().getLength()-1 > 0) {
+						novoValor = documentEvent.getDocument().getText(0, documentEvent.getDocument().getLength()-1);						
+					}
+				} catch (BadLocationException e) {
+					e.printStackTrace();
+				}
+				
+				if(getRequerimento() != null 
+						&& getRequerimento().getObjetivoRequerimento() != null) {
+					getRequerimento().getObjetivoRequerimento().setDescricao(novoValor);						
+				}
+			}
+		});
 		textObjetivoOutro.setEnabled(false);
 		GridBagConstraints gbc_textObjetivoOutro = new GridBagConstraints();
 		gbc_textObjetivoOutro.insets = new Insets(0, 0, 5, 0);
@@ -267,13 +303,14 @@ public class JanelaPrincipal {
 								comboParecerTecnico.requestFocus();
 								return null;
 							}
-							if (requerimento == null) {
+							if (getRequerimento() == null) {
 								throw new Exception("Requerimento SPUnet não carregado");
 							}
 							if(((OpcaoParecerTecnicoDeclaracaoDominio) comboParecerTecnico.getSelectedItem()).equals(OpcaoParecerTecnicoDeclaracaoDominio.INDEFINIDO)) {
 								throw new Exception("Selecione uma opção de análise");
 							}
-							requerimento.setProcedimentoFormatado(textNupSei.getText());
+							getRequerimento().setProcedimentoFormatado(textNupSei.getText());
+							getRequerimento().getObjetivoRequerimento().setDescricao(textObjetivoOutro.getText());
 							escriba.instruirProcessoSEI();
 						} catch (Exception e1) {
 							exibirMensagem("Falha ao instruir processo: " + e1.getMessage());
@@ -290,8 +327,9 @@ public class JanelaPrincipal {
 	private ActionListener selecionouObjetivoRequerimento() {
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// OpcaoObjetivoDeclaracaoDominio opcaoSelecionada = (OpcaoObjetivoDeclaracaoDominio) comboObjetivoRequerimento.getSelectedItem();
-				// popularOpcoesParecerTecnico(opcaoSelecionada);
+				OpcaoObjetivoDeclaracaoDominio opcaoSelecionada = (OpcaoObjetivoDeclaracaoDominio) comboObjetivoRequerimento.getSelectedItem();
+				getRequerimento().getObjetivoRequerimento().setId(opcaoSelecionada.getId());
+				textObjetivoOutro.setEnabled(opcaoSelecionada.equals(OpcaoObjetivoDeclaracaoDominio.OUTRO));
 			}
 		};
 	}
@@ -371,36 +409,35 @@ public class JanelaPrincipal {
 		return textAtendimento.getText();
 	}
 
-	public void setRequerimento(RequerimentoSPUnet requerimento) {
-		this.requerimento = requerimento;
-		aplicarDadosRequerimento(requerimento);
+	public void aplicarDadosRequerimento(RequerimentoSPUnet requerimentoSPUnet) {
+		// limparCamposRequerimento();
+		if (requerimentoSPUnet != null) {
+			Optional<OpcaoObjetivoDeclaracaoDominio> opcaoEnum = EnumSet.allOf(OpcaoObjetivoDeclaracaoDominio.class)
+					.stream().filter(e -> e.getId().equals(requerimentoSPUnet.getObjetivoRequerimento().getId())).findFirst();
+			OpcaoObjetivoDeclaracaoDominio objetivoDoRequerimento = opcaoEnum.get();
+			
+			popularOpcoesParecerTecnico(objetivoDoRequerimento);
+			if (opcaoEnum.isPresent()) {
+				comboObjetivoRequerimento.setSelectedItem(objetivoDoRequerimento);
+				if (objetivoDoRequerimento.equals(OpcaoObjetivoDeclaracaoDominio.OUTRO)) {
+					textObjetivoOutro.setEnabled(true);
+					textObjetivoOutro.setText(requerimentoSPUnet.getObjetivoRequerimento().getDescricao());
+				}
+			} else {
+				comboObjetivoRequerimento.setSelectedItem(OpcaoObjetivoDeclaracaoDominio.INDEFINIDO);
+			}
+
+			if (requerimentoSPUnet.getObjetivoRequerimento() != null) {
+			}
+			textNupSei.setText(requerimentoSPUnet.getProcedimentoFormatado());
+		}
 	}
 
-	private void aplicarDadosRequerimento(RequerimentoSPUnet requerimento) {
-		comboObjetivoRequerimento.setSelectedItem(OpcaoObjetivoDeclaracaoDominio.INDEFINIDO);
+	private void limparCamposRequerimento() {
 		textObjetivoOutro.setText(null);
 		textNupSei.setText(null);
 		textObjetivoOutro.setText(null);
 		textObjetivoOutro.setEnabled(false);
-
-		if (this.requerimento != null) {
-			Optional<OpcaoObjetivoDeclaracaoDominio> opcaoEnum = EnumSet.allOf(OpcaoObjetivoDeclaracaoDominio.class)
-					.stream().filter(e -> e.getId().equals(requerimento.getObjetivoRequerimento().getId())).findFirst();
-			OpcaoObjetivoDeclaracaoDominio objetivoDoRequerimento = opcaoEnum.get();
-			popularOpcoesParecerTecnico(objetivoDoRequerimento);
-			if (opcaoEnum.isPresent()) {
-				comboObjetivoRequerimento.setSelectedItem(objetivoDoRequerimento);
-				if (opcaoEnum.equals(OpcaoObjetivoDeclaracaoDominio.OUTRO)) {
-					textObjetivoOutro.setEnabled(true);
-				}
-			}
-
-			if (this.requerimento.getObjetivoRequerimento() != null) {
-				textObjetivoOutro.setText(this.requerimento.getObjetivoRequerimento().getDescricao());
-			}
-
-			textNupSei.setText(this.requerimento.getProcedimentoFormatado());
-		}
 	}
 
 	private void popularOpcoesParecerTecnico(OpcaoObjetivoDeclaracaoDominio opcaoEnum) {
@@ -423,6 +460,10 @@ public class JanelaPrincipal {
 
 	public void setComboParecerTecnico(JComboBox<OpcaoParecerTecnicoDeclaracaoDominio> comboParecerTecnico) {
 		this.comboParecerTecnico = comboParecerTecnico;
+	}
+
+	public RequerimentoSPUnet getRequerimento() {
+		return getEscriba().getRequerimento();
 	}
 
 }

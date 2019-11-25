@@ -72,13 +72,13 @@ public class OperadorSPUnet extends OperadorSistema {
 
 	private ObjetivoRequerimento montarObjetivoRequerimento(JSONObject json) {
 		ObjetivoRequerimento objetivoRequerimento = new ObjetivoRequerimento();
-		if(!json.isNull("descricao")) {
-			objetivoRequerimento.setDescricao(json.getString("descricao"));			
-		}
 		
 		JSONObject tipoObjetivoRequerimento = (JSONObject) json.get("tipoObjetivoRequerimento");
 		objetivoRequerimento.setId(tipoObjetivoRequerimento.getInt("id"));
 		objetivoRequerimento.setObjetivo(tipoObjetivoRequerimento.getString("descricao"));
+		if(!json.isNull("descricao")) {
+			objetivoRequerimento.setDescricao(json.getString("descricao"));			
+		}
 		
 		return objetivoRequerimento;
 	}

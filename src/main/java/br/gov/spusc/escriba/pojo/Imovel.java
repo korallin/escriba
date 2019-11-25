@@ -1,6 +1,7 @@
 package br.gov.spusc.escriba.pojo;
 
-import java.text.NumberFormat;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 import br.gov.spusc.escriba.MarcacaoDeTexto;
@@ -123,8 +124,9 @@ public class Imovel extends MarcacaoDeTexto {
 
 	public void setAreaTerreno(double areaTerreno) {
 		this.areaTerreno = areaTerreno;
-		NumberFormat numberFormat = NumberFormat.getNumberInstance(new Locale("pt", "BR"));
-		this.setAreaTerrenoFormatada(numberFormat.format(areaTerreno));			
+		
+		DecimalFormat decimalFormat = new DecimalFormat("#,###.00", new DecimalFormatSymbols(new Locale("pt", "BR")));
+		this.setAreaTerrenoFormatada(decimalFormat.format(areaTerreno));			
 	}
 
 	public String getAreaTerrenoFormatada() {
