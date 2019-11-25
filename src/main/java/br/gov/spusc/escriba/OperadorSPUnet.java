@@ -1,8 +1,6 @@
 package br.gov.spusc.escriba;
 
-import java.text.NumberFormat;
 import java.time.Duration;
-import java.util.Locale;
 import java.util.NoSuchElementException;
 
 import org.json.JSONArray;

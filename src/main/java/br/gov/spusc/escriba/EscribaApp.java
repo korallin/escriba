@@ -341,10 +341,20 @@ public class EscribaApp {
 
 	private void preencherMapaComCalendario(Map<String, List<String>> mapa) {
 		Calendar hoje = Calendar.getInstance();
-		mapa.put("Calendario.diaMes", new ArrayList<String>() {{
+		mapa.put("Calendario.diaMes", new ArrayList<String>() {/**
+			 * 
+			 */
+			private static final long serialVersionUID = 6761645874303224296L;
+
+		{
 			add(String.valueOf(hoje.get(Calendar.DAY_OF_MONTH)));
 		}});
-		mapa.put("Calendario.mesExtenso", new ArrayList<String>() {{
+		mapa.put("Calendario.mesExtenso", new ArrayList<String>() {/**
+			 * 
+			 */
+			private static final long serialVersionUID = -5985692406631141464L;
+
+		{
 			add(DateFormatSymbols.getInstance().getMonths()[hoje.get(Calendar.MONTH)]);
 		}});
 	}

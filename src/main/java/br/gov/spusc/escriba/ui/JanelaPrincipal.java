@@ -433,13 +433,6 @@ public class JanelaPrincipal {
 		}
 	}
 
-	private void limparCamposRequerimento() {
-		textObjetivoOutro.setText(null);
-		textNupSei.setText(null);
-		textObjetivoOutro.setText(null);
-		textObjetivoOutro.setEnabled(false);
-	}
-
 	private void popularOpcoesParecerTecnico(OpcaoObjetivoDeclaracaoDominio opcaoEnum) {
 		DefaultComboBoxModel<OpcaoParecerTecnicoDeclaracaoDominio> model = new DefaultComboBoxModel<OpcaoParecerTecnicoDeclaracaoDominio>(
 				OpcaoParecerTecnicoDeclaracaoDominio.values());
